@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aaditya's Lab Hub</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="hero">
+    <nav class="topbar">
+      <div class="brand">LAB<span>HUB</span></div>
+      <button id="themeBtn" class="icon-btn" aria-label="Toggle theme">☾</button>
+    </nav>
+
+    <div class="hero-content">
+      <div class="eyebrow">ENGINEERING LABORATORY</div>
+      <h1>Aaditya's<br><span>Lab Hub</span></h1>
+      <p class="subtitle">Your experiments, code, screenshots and results in one place.</p>
+      <input id="searchInput" class="search" type="search"
+             placeholder="Search subjects or experiments...">
+    </div>
+  </header>
+
+  <main class="container">
+    <section>
+      <div class="section-label">SUBJECTS</div>
+      <div id="subjectGrid" class="subject-grid"></div>
+    </section>
+
+    <section id="experimentSection" class="hidden">
+      <div class="section-head">
+        <div>
+          <div class="section-label">EXPERIMENTS</div>
+          <h2 id="subjectTitle">Subject</h2>
+        </div>
+        <button id="backBtn" class="secondary-btn">← Subjects</button>
+      </div>
+      <div id="experimentGrid" class="experiment-grid"></div>
+    </section>
+  </main>
+
+  <div id="modal" class="modal hidden" aria-hidden="true">
+    <div class="modal-card">
+      <div class="modal-top">
+        <div>
+          <div id="modalSubject" class="section-label"></div>
+          <h2 id="modalTitle"></h2>
+        </div>
+        <button id="closeModal" class="close-btn">×</button>
+      </div>
+
+      <div class="detail-block">
+        <h3>Aim</h3>
+        <p id="modalAim" class="muted"></p>
+      </div>
+
+      <div class="detail-block">
+        <h3>Theory</h3>
+        <p id="modalTheory" class="muted"></p>
+      </div>
+
+      <div class="detail-block">
+        <div class="code-head">
+          <h3>Code</h3>
+          <button id="copyBtn" class="primary-btn">Copy Code</button>
+        </div>
+        <pre id="modalCode"><code></code></pre>
+      </div>
+
+      <div class="detail-block">
+        <h3>Output / Screenshots</h3>
+        <div id="modalScreenshots" class="screenshots"></div>
+        <p class="hint">
+          Put screenshots inside <code>assets/</code> and set their file names
+          in <code>data.js</code>.
+        </p>
+      </div>
+
+      <div class="detail-block">
+        <h3>Result</h3>
+        <p id="modalResult" class="muted"></p>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    Aaditya's Lab Hub · Maximum 15 experiments per subject
+  </footer>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
