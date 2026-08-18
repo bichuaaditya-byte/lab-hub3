@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Aaditya's Lab Hub</title>
+<style>
+*{box-sizing:border-box}
+:root{--bg:#0b0d12;--panel:#12151d;--panel2:#191e28;--text:#f4f6fa;--muted:#9aa3b2;--line:#292f3b;--accent:#7c9cff}
+body.light{--bg:#f5f6f8;--panel:#fff;--panel2:#eef1f6;--text:#151820;--muted:#667085;--line:#dce1e8}
+body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
+.hero{min-height:430px;padding:24px 7vw 60px;border-bottom:1px solid var(--line);background:radial-gradient(circle at 75% 20%,rgba(124,156,255,.18),transparent 35%)}
+nav{display:flex;justify-content:space-between;align-items:center}.brand{font-weight:900;letter-spacing:2px}.brand span{color:var(--accent)}
+.actions{display:flex;gap:8px}.btn{border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:10px;padding:9px 13px;cursor:pointer}.primary{background:var(--accent);color:#07101f;border:0;font-weight:800}
+.hero-content{text-align:center;max-width:800px;margin:70px auto 0}.eyebrow,.label{color:var(--accent);font-size:11px;font-weight:900;letter-spacing:2px}
+h1{font-size:clamp(48px,8vw,88px);line-height:.95;letter-spacing:-4px;margin:12px 0}h1 span{color:var(--accent)}
+.subtitle,.muted{color:var(--muted);line-height:1.6}.search{width:min(650px,100%);padding:16px 18px;margin-top:14px;background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:14px;font-size:16px}
+main{max-width:1150px;margin:auto;padding:50px 7vw 70px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:22px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:17px;padding:21px;cursor:pointer}.card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.icon{font-size:30px}.title{font-size:21px;font-weight:800;margin-top:12px}.meta{color:var(--accent);font-size:12px;font-weight:800;margin-top:15px}
+.hidden{display:none!important}
+.head{display:flex;justify-content:space-between;align-items:center;gap:15px}
+.modal,.editor{position:fixed;inset:0;background:rgba(0,0,0,.76);display:grid;place-items:center;padding:18px;z-index:30}
+.panel{width:min(940px,100%);max-height:92vh;overflow:auto;background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:24px}
+.row{display:flex;justify-content:space-between;align-items:center;gap:15px}.close{font-size:24px;width:42px;height:42px}
+.section{margin-top:26px}.codehead{display:flex;justify-content:space-between;align-items:center}
+pre{margin:0;background:var(--panel2);border:1px solid var(--line);padding:18px;border-radius:13px;overflow:auto;white-space:pre-wrap}
+.shots{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}.shot{background:var(--panel2);padding:10px;border:1px solid var(--line);border-radius:12px}.shot img{width:100%;border-radius:8px}
+input,textarea,select{width:100%;background:var(--panel2);color:var(--text);border:1px solid var(--line);border-radius:10px;padding:10px;font:inherit}
+label{display:block;margin:13px 0;font-size:13px;font-weight:700}label>input,label>textarea,label>select{margin-top:6px}
+.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.tabs{display:flex;gap:8px;margin:18px 0}.tab.active{border-color:var(--accent);color:var(--accent)}
+.subjectrow{display:grid;grid-template-columns:1fr 2fr 100px;gap:8px;margin:8px 0}
+footer{border-top:1px solid var(--line);padding:24px 7vw;color:var(--muted);font-size:13px}
+@media(max-width:700px){.formgrid,.subjectrow{grid-template-columns:1fr}.head{align-items:flex-start}.hero{min-height:400px}h1{letter-spacing:-2px}}
+</style>
+</head>
+<body>
+<header class="hero">
+  <nav><div class="brand">LAB<span>HUB</span></div><div class="actions"><button id="editBtn" class="btn">✏️ Edit Lab</button><button id="themeBtn" class="btn">☾</button></div></nav>
+  <div class="hero-content"><div class="eyebrow">ENGINEERING LABORATORY</div><h1>Aaditya's<br><span>Lab Hub</span></h1><p class="subtitle">Experiments, code, screenshots and results in one place.</p><input id="search" class="search" placeholder="Search subjects or experiments..."></div>
+</header>
+
+<main>
+  <section id="subjectsView"><div class="label">SUBJECTS</div><div id="subjects" class="grid"></div></section>
+  <section id="experimentsView" class="hidden">
+    <div class="head"><div><div class="label">EXPERIMENTS</div><h2 id="subjectName"></h2></div><button id="backBtn" class="btn">← Subjects</button></div>
+    <div id="experiments" class="grid"></div>
+  </section>
+</main>
+
+<div id="detail" class="modal hidden"><div class="panel">
+  <div class="row"><div><div id="dSubject" class="label"></div><h2 id="dTitle"></h2></div><button id="closeDetail" class="btn close">×</button></div>
+  <div class="section"><h3>Aim</h3><p id="dAim" class="muted"></p></div>
+  <div class="section"><h3>Theory</h3><p id="dTheory" class="muted"></p></div>
+  <div class="section"><div class="codehead"><h3>Code</h3><button id="copy" class="btn primary">Copy Code</button></div><pre id="dCode"></pre></div>
+  <div class="section"><h3>Output / Screenshots</h3><div id="dShots" class="shots"></div></div>
+  <div class="section"><h3>Result</h3><p id="dResult" class="muted"></p></div>
+</div></div>
+
+<div id="editor" class="editor hidden"><div class="panel">
+  <div class="row"><div><div class="label">EDITOR</div><h2>Edit Lab</h2><p class="muted">Changes are saved in this browser.</p></div><button id="closeEditor" class="btn close">×</button></div>
+  <div class="tabs"><button id="tabExp" class="btn tab active">Experiments</button><button id="tabSub" class="btn tab">Subjects</button></div>
+  <div id="expEditor">
+    <div class="formgrid">
+      <label>Subject<select id="eSubject"></select></label>
+      <label>Experiment<select id="eNumber"></select></label>
+    </div>
+    <label>Name<input id="eName"></label>
+    <label>Aim<textarea id="eAim" rows="3"></textarea></label>
+    <label>Theory<textarea id="eTheory" rows="5"></textarea></label>
+    <label>Code<textarea id="eCode" rows="12"></textarea></label>
+    <label>Result<textarea id="eResult" rows="3"></textarea></label>
+    <label>Upload screenshots<input id="eFiles" type="file" accept="image/*" multiple></label>
+    <div id="eShots" class="shots"></div>
+    <div class="actions"><button id="saveExp" class="btn primary">Save Experiment</button><button id="resetExp" class="btn">Reset</button><button id="export" class="btn">Download data.js</button></div>
+  </div>
+  <div id="subEditor" class="hidden">
+    <div id="subRows"></div>
+    <div class="actions"><button id="addSub" class="btn primary">Add Subject</button><button id="saveSub" class="btn">Save Subjects</button></div>
+  </div>
+</div></div>
+
+<footer>Aaditya's Lab Hub · 15 experiment slots per subject</footer>
+
+<script>
+(function(){
+"use strict";
+const STORAGE="labhub_single_v3";
+const IMAGE_STORAGE="labhub_images_v3";
+const defaults=[
+  ["vlsi","VLSI","🔌"],["arm","ARM","⚙️"],["os","OS","💿"],["coa","COA","💻"],["instrumentation","Instrumentation","🤖"]
+];
+function makeExp(n){return {number:n,name:"Experiment "+String(n).padStart(2,"0"),aim:"Add the aim here.",theory:"Add theory here.",code:"// Paste your code here",result:"Add the result here.",screenshots:[]};}
+function initial(){return defaults.map(([id,name,icon])=>({id,name,icon,experiments:Array.from({length:15},(_,i)=>makeExp(i+1))}));}
+let data;
+try{data=JSON.parse(localStorage.getItem(STORAGE))||initial()}catch{data=initial()}
+let curSub=null,curExp=null;
+const $=id=>document.getElementById(id);
+function save(){localStorage.setItem(STORAGE,JSON.stringify(data))}
+function sub(){return data.find(x=>x.id===$("eSubject").value)}
+function ex(){return sub()?.experiments.find(x=>x.number===Number($("eNumber").value))}
+function renderSubjects(q=""){
+ q=q.toLowerCase().trim();
+ $("subjects").innerHTML=data.filter(s=>s.name.toLowerCase().includes(q)||s.experiments.some(e=>e.name.toLowerCase().includes(q))).map(s=>`<article class="card" data-id="${s.id}"><div class="icon">${esc(s.icon)}</div><div class="title">${esc(s.name)}</div><p class="muted">15 experiments with code, screenshots and results.</p><div class="meta">01 — 15 experiments →</div></article>`).join("")||'<p class="muted">No subjects found.</p>';
+ document.querySelectorAll("#subjects .card").forEach(x=>x.onclick=()=>openSubject(x.dataset.id));
+}
+function openSubject(id){
+ curSub=data.find(s=>s.id===id); if(!curSub)return;
+ $("subjectName").textContent=curSub.name;
+ $("experiments").innerHTML=curSub.experiments.map(e=>`<article class="card" data-n="${e.number}"><div class="label">EXPERIMENT ${String(e.number).padStart(2,"0")}</div><div class="title">${esc(e.name)}</div><p class="muted">Open details, code and screenshots.</p></article>`).join("");
+ document.querySelectorAll("#experiments .card").forEach(x=>x.onclick=()=>openDetail(Number(x.dataset.n)));
+ $("subjectsView").classList.add("hidden");$("experimentsView").classList.remove("hidden");window.scrollTo(0,0);
+}
+function openDetail(n){
+ curExp=curSub.experiments.find(e=>e.number===n);if(!curExp)return;
+ $("dSubject").textContent=curSub.name;$("dTitle").textContent=curExp.name;$("dAim").textContent=curExp.aim;$("dTheory").textContent=curExp.theory;$("dCode").textContent=curExp.code;$("dResult").textContent=curExp.result;
+ renderImages(curExp,$("dShots"));$("detail").classList.remove("hidden");
+}
+function renderImages(e,box){
+ box.innerHTML="";
+ const files=e.screenshots||[];
+ if(!files.length){box.innerHTML='<div class="shot" style="min-height:100px;display:grid;place-items:center;color:var(--muted)">No screenshots added.</div>';return}
+ files.forEach((src,i)=>{const d=document.createElement("div");d.className="shot";const im=new Image();im.src=src;im.alt="Output screenshot "+(i+1);d.appendChild(im);box.appendChild(d)})
+}
+function fillEditor(){
+ $("eSubject").innerHTML=data.map(s=>`<option value="${s.id}">${esc(s.name)}</option>`).join("");
+ if(curSub)$("eSubject").value=curSub.id;
+ fillNumbers();
+}
+function fillNumbers(){
+ const s=sub();if(!s)return;$("eNumber").innerHTML=s.experiments.map(e=>`<option value="${e.number}">${String(e.number).padStart(2,"0")} — ${esc(e.name)}</option>`).join("");loadEditor();
+}
+function loadEditor(){
+ const e=ex();if(!e)return;
+ $("eName").value=e.name;$("eAim").value=e.aim;$("eTheory").value=e.theory;$("eCode").value=e.code;$("eResult").value=e.result;renderEditorShots(e);
+}
+function renderEditorShots(e){
+ $("eShots").innerHTML="";
+ (e.screenshots||[]).forEach((src,i)=>{
+   const d=document.createElement("div");d.className="shot";d.innerHTML='<img src="'+src+'" alt="Saved screenshot"><button class="btn" data-i="'+i+'">Remove</button>';
+   $("eShots").appendChild(d)
+ });
+ $("eShots").querySelectorAll("button").forEach(b=>b.onclick=()=>{e.screenshots.splice(Number(b.dataset.i),1);save();renderEditorShots(e)})
+}
+$("search").oninput=e=>renderSubjects(e.target.value);
+$("backBtn").onclick=()=>{$("experimentsView").classList.add("hidden");$("subjectsView").classList.remove("hidden");window.scrollTo(0,0)}
+$("closeDetail").onclick=()=>$("detail").classList.add("hidden");
+$("detail").onclick=e=>{if(e.target===$("detail"))$("detail").classList.add("hidden")};
+$("copy").onclick=async()=>{try{await navigator.clipboard.writeText(curExp.code);$("copy").textContent="Copied!";setTimeout(()=>$("copy").textContent="Copy Code",1000)}catch{alert("Copy failed.")}};
+$("themeBtn").onclick=()=>{document.body.classList.toggle("light");$("themeBtn").textContent=document.body.classList.contains("light")?"☀":"☾"};
+$("editBtn").onclick=()=>{$("editor").classList.remove("hidden");fillEditor();renderSubEditor()};
+$("closeEditor").onclick=()=>$("editor").classList.add("hidden");
+$("editor").onclick=e=>{if(e.target===$("editor"))$("editor").classList.add("hidden")};
+$("eSubject").onchange=fillNumbers;$("eNumber").onchange=loadEditor;
+$("saveExp").onclick=()=>{
+ const e=ex();if(!e)return;e.name=$("eName").value||e.name;e.aim=$("eAim").value;e.theory=$("eTheory").value;e.code=$("eCode").value;e.result=$("eResult").value;
+ const files=[...$("eFiles").files];
+ let pending=files.length;
+ if(!pending){save();renderSubjects($("search").value);if(curSub)openSubject(curSub.id);renderEditorShots(e);alert("Saved locally.");return}
+ files.forEach(f=>{const r=new FileReader();r.onload=()=>{e.screenshots.push(r.result);if(--pending===0){save();renderSubjects($("search").value);if(curSub)openSubject(curSub.id);renderEditorShots(e);alert("Saved locally.")}};r.readAsDataURL(f)})
+};
+$("resetExp").onclick=()=>{if(!confirm("Reset this experiment?"))return;const d=initial().find(s=>s.id===sub().id).experiments.find(e=>e.number===Number($("eNumber").value));Object.assign(ex(),JSON.parse(JSON.stringify(d)));save();loadEditor()};
+$("export").onclick=()=>{
+ const out="const LAB_DATA = "+JSON.stringify(data,null,2)+";\\n";
+ const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([out],{type:"text/javascript"}));a.download="data.js";a.click();
+};
+function renderSubEditor(){
+ $("subRows").innerHTML=data.map((s,i)=>`<div class="subjectrow" data-i="${i}"><input class="sid" value="${attr(s.id)}" disabled><input class="sname" value="${attr(s.name)}"><input class="sicon" value="${attr(s.icon)}"></div>`).join("");
+}
+$("addSub").onclick=()=>{
+ if(data.length>=15){alert("Maximum 15 subjects.");return}
+ const id="subject-"+Date.now();data.push({id,name:"New Subject",icon:"📘",experiments:Array.from({length:15},(_,i)=>makeExp(i+1))});save();fillEditor();renderSubEditor();renderSubjects()
+};
+$("saveSub").onclick=()=>{document.querySelectorAll(".subjectrow").forEach(r=>{const i=Number(r.dataset.i);data[i].name=r.querySelector(".sname").value||data[i].name;data[i].icon=r.querySelector(".sicon").value||"📘"});save();renderSubjects();fillEditor();alert("Subjects saved locally.")};
+$("tabExp").onclick=()=>{$("expEditor").classList.remove("hidden");$("subEditor").classList.add("hidden");$("tabExp").classList.add("active");$("tabSub").classList.remove("active")};
+$("tabSub").onclick=()=>{$("subEditor").classList.remove("hidden");$("expEditor").classList.add("hidden");$("tabSub").classList.add("active");$("tabExp").classList.remove("active")};
+function esc(v){return String(v).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;")}
+function attr(v){return esc(v)}
+renderSubjects();
+})();
+</script>
+</body>
+</html>
