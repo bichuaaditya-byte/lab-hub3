@@ -2,113 +2,558 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Aaditya's Lab Hub</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-body{margin:0;background:#0b0d12;color:#f4f6fa;font-family:system-ui,sans-serif}
-.wrap{max-width:1000px;margin:auto;padding:40px 6vw}
-header{padding:30px 0 50px}h1{font-size:60px;line-height:.95;margin:10px 0}h1 span{color:#7c9cff}
-p{color:#9aa3b2}.bar{display:flex;justify-content:space-between;align-items:center}
-button{background:#12151d;border:1px solid #292f3b;color:#fff;border-radius:10px;padding:10px 14px;cursor:pointer}
-button.primary{background:#7c9cff;color:#07101f;border:0;font-weight:700}
-.status{padding:12px 15px;border-radius:10px;background:#12151d;border:1px solid #292f3b;margin:20px 0}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
-.card{background:#12151d;border:1px solid #292f3b;border-radius:16px;padding:20px;cursor:pointer}
-.card:hover{border-color:#7c9cff}.icon{font-size:30px}.title{font-size:21px;font-weight:800;margin-top:12px}
-.modal{position:fixed;inset:0;background:#000b;display:grid;place-items:center;padding:18px}.panel{width:min(560px,100%);background:#12151d;border:1px solid #292f3b;border-radius:18px;padding:24px}
-.hidden{display:none}input,textarea,select{width:100%;box-sizing:border-box;background:#191e28;color:#fff;border:1px solid #292f3b;border-radius:10px;padding:10px;margin-top:6px}
-label{display:block;margin:12px 0;font-weight:700;font-size:13px}
+*{box-sizing:border-box}
+:root{--bg:#0b0d12;--panel:#12151d;--panel2:#191e28;--text:#f4f6fa;--muted:#9aa3b2;--line:#292f3b;--accent:#7c9cff;--danger:#ff7b7b;--ok:#8fe3a1}
+body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
+header{padding:24px 7vw 60px;border-bottom:1px solid var(--line);background:radial-gradient(circle at 75% 20%,rgba(124,156,255,.18),transparent 35%)}
+nav,.row{display:flex;justify-content:space-between;align-items:center;gap:12px}.brand{font-weight:900;letter-spacing:2px}.brand span{color:var(--accent)}
+.actions{display:flex;gap:8px}.btn{background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:10px;padding:10px 14px;cursor:pointer}.primary{background:var(--accent);color:#07101f;border:0;font-weight:800}.danger{border-color:#603236;color:#ff9b9b}
+.hero{max-width:900px;margin:75px auto 0}.eyebrow,.label{color:var(--accent);font-size:11px;font-weight:900;letter-spacing:2px}
+h1{font-size:clamp(52px,8vw,90px);line-height:.95;letter-spacing:-4px;margin:12px 0}h1 span{color:var(--accent)}
+h2{font-size:32px}.muted{color:var(--muted);line-height:1.65}.search{width:min(650px,100%);padding:16px 18px;background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:14px;font-size:16px;margin-top:15px}
+main{max-width:1150px;margin:auto;padding:45px 7vw 70px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin-top:22px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:17px;padding:21px;cursor:pointer}.card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.icon{font-size:30px}.title{font-size:21px;font-weight:800;margin-top:12px}.meta{color:var(--accent);font-size:12px;font-weight:800;margin-top:14px}
+.status{margin:18px 0;padding:12px 15px;background:var(--panel);border:1px solid var(--line);border-radius:10px;color:var(--muted)}.status.ok{color:var(--ok)}.status.bad{color:#ffadad}
+.hidden{display:none!important}.modal{position:fixed;inset:0;background:rgba(0,0,0,.78);display:grid;place-items:center;padding:16px;z-index:30}.panel{width:min(1000px,100%);max-height:94vh;overflow:auto;background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:24px}
+.section{margin-top:26px}.codehead{display:flex;justify-content:space-between;align-items:center;gap:12px}pre{background:var(--panel2);border:1px solid var(--line);padding:18px;border-radius:13px;overflow:auto;white-space:pre-wrap}
+.shots{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}.shot{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:10px}.shot img{width:100%;display:block;border-radius:8px}
+input,textarea,select{width:100%;margin-top:6px;padding:11px;border-radius:10px;border:1px solid var(--line);background:var(--panel2);color:var(--text);font:inherit}label{display:block;margin:14px 0;font-size:13px;font-weight:700}
+.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.tabs{display:flex;gap:8px;margin:18px 0}.tab.active{color:var(--accent);border-color:var(--accent)}
+.subjectrow{display:grid;grid-template-columns:2fr 100px 70px;gap:8px;margin:8px 0}.small{font-size:12px}.empty{color:var(--muted)}
+@media(max-width:700px){.formgrid,.subjectrow{grid-template-columns:1fr}h1{letter-spacing:-2px}}
 </style>
 </head>
 <body>
-<div class="wrap">
 <header>
-<div class="bar"><b>LAB<span style="color:#7c9cff">HUB</span></b><div><button id="editBtn" class="hidden">Edit Lab</button><button id="loginBtn">Sign in</button></div></div>
-<div style="margin-top:60px"><small style="color:#7c9cff;letter-spacing:2px;font-weight:800">ENGINEERING LABORATORY</small><h1>Aaditya's<br><span>Lab Hub</span></h1><p>Online experiments, code, screenshots and results.</p></div>
+<nav>
+  <div class="brand">LAB<span>HUB</span></div>
+  <div class="actions">
+    <button id="editBtn" class="btn hidden">✏️ Edit Lab</button>
+    <button id="authBtn" class="btn">🔐 Sign in</button>
+  </div>
+</nav>
+<div class="hero">
+  <div class="eyebrow">ENGINEERING LABORATORY</div>
+  <h1>Aaditya's<br><span>Lab Hub</span></h1>
+  <p class="muted">Your experiments, code, screenshots and results — saved online.</p>
+  <input id="search" class="search" placeholder="Search subjects or experiments..." type="search">
+</div>
 </header>
-<div id="status" class="status">Connecting to Supabase…</div>
-<div id="subjects" class="grid"></div>
+
+<main>
+<div id="status" class="status">Connecting to online database…</div>
+<section id="subjectsView">
+  <div class="label">SUBJECTS</div>
+  <div id="subjects" class="grid"></div>
+</section>
+<section id="experimentsView" class="hidden">
+  <div class="row">
+    <div><div class="label">EXPERIMENTS</div><h2 id="subjectName"></h2></div>
+    <button id="backBtn" class="btn">← Subjects</button>
+  </div>
+  <div id="experiments" class="grid"></div>
+</section>
+</main>
+
+<!-- Auth -->
+<div id="authModal" class="modal hidden">
+  <div class="panel" style="max-width:520px">
+    <div class="row"><h2>Lab Hub Login</h2><button id="closeAuth" class="btn">×</button></div>
+    <p class="muted">Anyone can view the lab. Sign in to edit it.</p>
+    <label>Email<input id="email" type="email" autocomplete="email"></label>
+    <label>Password<input id="password" type="password" autocomplete="current-password"></label>
+    <div class="actions">
+      <button id="signIn" class="btn primary">Sign in</button>
+      <button id="signUp" class="btn">Create account</button>
+    </div>
+    <div id="authStatus" class="status"></div>
+  </div>
 </div>
 
-<div id="auth" class="modal hidden"><div class="panel">
-<div class="bar"><h2>Lab Hub Login</h2><button id="closeAuth">×</button></div>
-<p>Sign in to edit your lab. Viewing is public.</p>
-<label>Email<input id="email" type="email"></label>
-<label>Password<input id="password" type="password"></label>
-<div><button id="signin" class="primary">Sign in</button> <button id="signup">Create account</button></div>
-<div id="authMsg" class="status"></div>
-</div></div>
+<!-- Detail -->
+<div id="detailModal" class="modal hidden">
+  <div class="panel">
+    <div class="row"><div><div id="detailSubject" class="label"></div><h2 id="detailTitle"></h2></div><button id="closeDetail" class="btn">×</button></div>
+    <div class="section"><h3>Aim</h3><p id="detailAim" class="muted"></p></div>
+    <div class="section"><h3>Theory</h3><p id="detailTheory" class="muted"></p></div>
+    <div class="section"><div class="codehead"><h3>Code</h3><button id="copyCode" class="btn primary">Copy Code</button></div><pre id="detailCode"></pre></div>
+    <div class="section"><h3>Output / Screenshots</h3><div id="detailShots" class="shots"></div></div>
+    <div class="section"><h3>Result</h3><p id="detailResult" class="muted"></p></div>
+  </div>
+</div>
+
+<!-- Editor -->
+<div id="editorModal" class="modal hidden">
+  <div class="panel">
+    <div class="row"><div><div class="label">ONLINE EDITOR</div><h2>Edit Lab</h2><p class="muted">Changes save directly to the online database.</p></div><button id="closeEditor" class="btn">×</button></div>
+
+    <div class="tabs">
+      <button id="expTab" class="btn tab active">Experiments</button>
+      <button id="subTab" class="btn tab">Subjects</button>
+    </div>
+
+    <div id="expPane">
+      <div class="formgrid">
+        <label>Subject<select id="editSubject"></select></label>
+        <label>Experiment<select id="editExperiment"></select></label>
+      </div>
+      <label>Experiment name<input id="editName"></label>
+      <label>Aim<textarea id="editAim" rows="3"></textarea></label>
+      <label>Theory<textarea id="editTheory" rows="5"></textarea></label>
+      <label>Code<textarea id="editCode" rows="12"></textarea></label>
+      <label>Result<textarea id="editResult" rows="3"></textarea></label>
+      <label>Upload screenshots<input id="editFiles" type="file" accept="image/*" multiple></label>
+      <div id="editShots" class="shots"></div>
+      <div class="actions"><button id="saveExperiment" class="btn primary">Save Online</button><button id="resetExperiment" class="btn">Reset</button></div>
+      <div id="saveStatus" class="status"></div>
+    </div>
+
+    <div id="subPane" class="hidden">
+      <div id="subjectRows"></div>
+      <div class="actions"><button id="addSubject" class="btn primary">＋ Add Subject</button><button id="saveSubjects" class="btn">Save Subjects Online</button></div>
+      <div id="subStatus" class="status"></div>
+    </div>
+  </div>
+</div>
 
 <script>
-const SUPABASE_URL="https://mosllsrduvscosldetiy.supabase.co";
-const SUPABASE_PUBLISHABLE_KEY="sb_publishable_6FmY5RVASWUiCYZ0X-czxQ_QRTcWajC";
-const client=supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
+const SUPABASE_URL = "https://mosllsrduvscosldetiy.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_6FmY5RVASWUiCYZ0X-czxQ_QRTcWajC";
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
 
-const $=id=>document.getElementById(id);
+let lab = null;
+let subjects = [];
+let experiments = [];
+let currentSubject = null;
+let currentExperiment = null;
 
-async function checkConnection(){
-  const status=$("status");
-  const result=await client.from("labs").select("id,name").limit(1);
-  if(result.error){
-    console.error(result.error);
-    status.textContent="Supabase connection error: "+result.error.message;
-    status.style.color="#ff8d8d";
-    return;
-  }
-  status.textContent="Online database connected ✓";
-  status.style.color="#9cffb0";
-  renderLabs(result.data||[]);
-}
-
-function renderLabs(labs){
-  const box=$("subjects");
-  if(!labs.length){
-    box.innerHTML='<div class="card"><div class="title">Your lab is ready to be created</div><p>Sign in and click Edit Lab to create it.</p></div>';
-    return;
-  }
-  box.innerHTML=labs.map(l=>`<div class="card"><div class="icon">👤</div><div class="title">${escapeHtml(l.name)}</div><p>Online lab storage is active.</p></div>`).join("");
-}
-
-function escapeHtml(v){
-  return String(v).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;");
-}
+const $ = id => document.getElementById(id);
+const esc = value => String(value ?? "")
+  .replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
+  .replaceAll('"',"&quot;");
 
 async function refreshSession(){
-  const {data}=await client.auth.getSession();
-  if(data.session){
+  const {data:{session}} = await sb.auth.getSession();
+  if(session){
     $("editBtn").classList.remove("hidden");
-    $("loginBtn").textContent="Sign out";
-    $("loginBtn").onclick=async()=>{await client.auth.signOut();location.reload()};
+    $("authBtn").textContent = "Sign out";
+  }else{
+    $("editBtn").classList.add("hidden");
+    $("authBtn").textContent = "🔐 Sign in";
   }
 }
 
-$("loginBtn").onclick=()=>{$("auth").classList.remove("hidden")};
-$("closeAuth").onclick=()=>{$("auth").classList.add("hidden")};
+async function loadLab(){
+  $("status").textContent = "Connecting to online database…";
+  $("status").className = "status";
+  try{
+    const {data:labs,error} = await sb.from("labs").select("*").limit(1);
+    if(error) throw error;
+    lab = labs?.[0] || null;
 
-$("signin").onclick=async()=>{
-  $("authMsg").textContent="Signing in…";
-  const r=await client.auth.signInWithPassword({
+    if(!lab){
+      $("status").textContent = "Online database connected ✓ — Sign in and click Edit Lab to create your lab.";
+      $("status").className = "status ok";
+      $("subjects").innerHTML = "";
+      return;
+    }
+
+    const {data:s,error:se} = await sb.from("subjects").select("*").eq("lab_id",lab.id).order("position");
+    if(se) throw se;
+    subjects = s || [];
+
+    experiments = [];
+    if(subjects.length){
+      const ids = subjects.map(x=>x.id);
+      const {data:e,error:ee} = await sb.from("experiments").select("*").in("subject_id",ids).order("experiment_number");
+      if(ee) throw ee;
+      experiments = e || [];
+    }
+
+    $("status").textContent = "Online database connected ✓";
+    $("status").className = "status ok";
+    renderSubjects($("search").value);
+  }catch(err){
+    console.error(err);
+    $("status").textContent = "Database error: " + err.message;
+    $("status").className = "status bad";
+  }
+}
+
+function renderSubjects(query=""){
+  const q = query.toLowerCase().trim();
+  const list = subjects.filter(s =>
+    s.name.toLowerCase().includes(q) ||
+    experiments.some(e => e.subject_id === s.id && e.name.toLowerCase().includes(q))
+  );
+
+  $("subjects").innerHTML = list.map(s => `
+    <article class="card" data-id="${s.id}">
+      <div class="icon">${esc(s.icon)}</div>
+      <div class="title">${esc(s.name)}</div>
+      <p class="muted">15 experiments with code, screenshots and results.</p>
+      <div class="meta">01 — 15 experiments →</div>
+    </article>
+  `).join("") || '<p class="empty">No subjects found.</p>';
+
+  document.querySelectorAll("#subjects .card").forEach(card => {
+    card.onclick = () => openSubject(card.dataset.id);
+  });
+}
+
+function openSubject(id){
+  currentSubject = subjects.find(s => s.id === id);
+  if(!currentSubject) return;
+
+  const list = experiments
+    .filter(e => e.subject_id === id)
+    .sort((a,b) => a.experiment_number - b.experiment_number);
+
+  $("subjectName").textContent = currentSubject.name;
+  $("experiments").innerHTML = list.map(e => `
+    <article class="card" data-id="${e.id}">
+      <div class="label">EXPERIMENT ${String(e.experiment_number).padStart(2,"0")}</div>
+      <div class="title">${esc(e.name)}</div>
+      <p class="muted">Open details, code and screenshots.</p>
+    </article>
+  `).join("");
+
+  document.querySelectorAll("#experiments .card").forEach(card => {
+    card.onclick = () => openDetail(card.dataset.id);
+  });
+
+  $("subjectsView").classList.add("hidden");
+  $("experimentsView").classList.remove("hidden");
+  scrollTo(0,0);
+}
+
+async function openDetail(id){
+  currentExperiment = experiments.find(e => e.id === id);
+  if(!currentExperiment) return;
+
+  $("detailSubject").textContent = currentSubject.name;
+  $("detailTitle").textContent = currentExperiment.name;
+  $("detailAim").textContent = currentExperiment.aim;
+  $("detailTheory").textContent = currentExperiment.theory;
+  $("detailCode").textContent = currentExperiment.code;
+  $("detailResult").textContent = currentExperiment.result;
+
+  $("detailShots").innerHTML = (currentExperiment.screenshots || []).map(url =>
+    `<div class="shot"><img src="${esc(url)}" alt="Output screenshot"></div>`
+  ).join("") || '<div class="shot"><span class="muted">No screenshots added.</span></div>';
+
+  $("detailModal").classList.remove("hidden");
+}
+
+async function createLabForUser(user){
+  const {data:existing,error:checkError} = await sb.from("labs").select("*").eq("owner_id",user.id).limit(1);
+  if(checkError) throw checkError;
+  if(existing?.length) return existing[0];
+
+  const {data:newLab,error} = await sb.from("labs").insert({
+    owner_id:user.id,
+    name:"Aaditya's Lab Hub"
+  }).select().single();
+  if(error) throw error;
+
+  const seeds = [
+    ["vlsi","VLSI","🔌"],
+    ["arm","ARM","⚙️"],
+    ["os","OS","💿"],
+    ["coa","COA","💻"],
+    ["instrumentation","Instrumentation","🤖"]
+  ];
+
+  for(let i=0;i<seeds.length;i++){
+    const [id,name,icon] = seeds[i];
+    const {data:subject,error:subjectError} = await sb.from("subjects").insert({
+      lab_id:newLab.id,name,icon,position:i
+    }).select().single();
+    if(subjectError) throw subjectError;
+
+    const rows = Array.from({length:15},(_,n)=>({
+      subject_id:subject.id,
+      experiment_number:n+1,
+      name:`Experiment ${String(n+1).padStart(2,"0")}`,
+      aim:"Add the aim here.",
+      theory:"Add theory here.",
+      code:"// Paste your code here",
+      result:"Add the result here.",
+      screenshots:[]
+    }));
+    const {error:expError} = await sb.from("experiments").insert(rows);
+    if(expError) throw expError;
+  }
+  return newLab;
+}
+
+async function openEditor(){
+  const {data:{user}} = await sb.auth.getUser();
+  if(!user){
+    $("authModal").classList.remove("hidden");
+    return;
+  }
+  try{
+    lab = await createLabForUser(user);
+    await loadLab();
+    populateEditor();
+    $("editorModal").classList.remove("hidden");
+  }catch(err){
+    alert("Could not open the editor: " + err.message);
+  }
+}
+
+function populateEditor(){
+  $("editSubject").innerHTML = subjects.map(s =>
+    `<option value="${s.id}">${esc(s.name)}</option>`
+  ).join("");
+  if(currentSubject) $("editSubject").value = currentSubject.id;
+  populateExperimentSelect();
+  renderSubjectRows();
+}
+
+function populateExperimentSelect(){
+  const s = subjects.find(x => x.id === $("editSubject").value);
+  if(!s) return;
+
+  const list = experiments
+    .filter(e => e.subject_id === s.id)
+    .sort((a,b) => a.experiment_number - b.experiment_number);
+
+  $("editExperiment").innerHTML = list.map(e =>
+    `<option value="${e.id}">${String(e.experiment_number).padStart(2,"0")} — ${esc(e.name)}</option>`
+  ).join("");
+
+  loadEditorFields();
+}
+
+function loadEditorFields(){
+  currentSubject = subjects.find(s => s.id === $("editSubject").value);
+  currentExperiment = experiments.find(e => e.id === $("editExperiment").value);
+  if(!currentExperiment) return;
+
+  $("editName").value = currentExperiment.name;
+  $("editAim").value = currentExperiment.aim;
+  $("editTheory").value = currentExperiment.theory;
+  $("editCode").value = currentExperiment.code;
+  $("editResult").value = currentExperiment.result;
+  renderEditorShots();
+}
+
+function renderEditorShots(){
+  $("editShots").innerHTML = (currentExperiment?.screenshots || []).map((url,i) => `
+    <div class="shot">
+      <img src="${esc(url)}" alt="Saved screenshot">
+      <button class="btn" data-shot="${i}" style="margin-top:8px">Remove</button>
+    </div>
+  `).join("");
+
+  document.querySelectorAll("[data-shot]").forEach(btn => {
+    btn.onclick = async () => {
+      const i = Number(btn.dataset.shot);
+      const url = currentExperiment.screenshots[i];
+      currentExperiment.screenshots.splice(i,1);
+      const pathMarker = "/object/public/lab-screenshots/";
+      const idx = url.indexOf(pathMarker);
+      if(idx !== -1){
+        const path = decodeURIComponent(url.slice(idx + pathMarker.length));
+        await sb.storage.from("lab-screenshots").remove([path]);
+      }
+      const {data,error} = await sb.from("experiments").update({
+        screenshots: currentExperiment.screenshots,
+        updated_at:new Date().toISOString()
+      }).eq("id",currentExperiment.id).select().single();
+      if(!error) Object.assign(currentExperiment,data);
+      renderEditorShots();
+      renderSubjects($("search").value);
+    };
+  });
+}
+
+async function saveExperiment(){
+  if(!currentExperiment) return;
+  $("saveStatus").textContent = "Saving online…";
+
+  const screenshotUrls = [...(currentExperiment.screenshots || [])];
+  const {data:{user}} = await sb.auth.getUser();
+  if(!user){$("saveStatus").textContent="Please sign in again.";return}
+
+  for(const file of [...$("editFiles").files]){
+    const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g,"_");
+    const path = `${user.id}/${currentExperiment.id}/${crypto.randomUUID()}-${safeName}`;
+    const upload = await sb.storage.from("lab-screenshots").upload(path,file,{upsert:false});
+    if(upload.error){
+      $("saveStatus").textContent = "Screenshot upload failed: " + upload.error.message;
+      return;
+    }
+    const url = sb.storage.from("lab-screenshots").getPublicUrl(path).data.publicUrl;
+    screenshotUrls.push(url);
+  }
+
+  const update = {
+    name:$("editName").value.trim() || currentExperiment.name,
+    aim:$("editAim").value,
+    theory:$("editTheory").value,
+    code:$("editCode").value,
+    result:$("editResult").value,
+    screenshots:screenshotUrls,
+    updated_at:new Date().toISOString()
+  };
+
+  const {data,error} = await sb.from("experiments").update(update).eq("id",currentExperiment.id).select().single();
+  if(error){
+    $("saveStatus").textContent = "Save failed: " + error.message;
+    return;
+  }
+
+  Object.assign(currentExperiment,data);
+  $("editFiles").value = "";
+  $("saveStatus").textContent = "Saved online ✓";
+  renderEditorShots();
+  renderSubjects($("search").value);
+}
+
+function renderSubjectRows(){
+  $("subjectRows").innerHTML = subjects.map(s => `
+    <div class="subjectrow" data-id="${s.id}">
+      <input class="subjectName" value="${esc(s.name)}">
+      <input class="subjectIcon" value="${esc(s.icon)}">
+      <button class="btn danger deleteSubject" data-id="${s.id}">Delete</button>
+    </div>
+  `).join("");
+
+  document.querySelectorAll(".deleteSubject").forEach(btn => {
+    btn.onclick = async () => {
+      if(!confirm("Delete this subject and all 15 experiments?")) return;
+      const id = btn.dataset.id;
+      const {error} = await sb.from("subjects").delete().eq("id",id);
+      if(error){$("subStatus").textContent="Delete failed: "+error.message;return}
+      await loadLab();
+      populateEditor();
+      $("subStatus").textContent="Subject deleted online ✓";
+    };
+  });
+}
+
+async function saveSubjects(){
+  for(const row of document.querySelectorAll(".subjectrow")){
+    const id = row.dataset.id;
+    const name = row.querySelector(".subjectName").value.trim();
+    const icon = row.querySelector(".subjectIcon").value.trim() || "📘";
+    const {error} = await sb.from("subjects").update({
+      name,icon,updated_at:new Date().toISOString()
+    }).eq("id",id);
+    if(error){$("subStatus").textContent="Save failed: "+error.message;return}
+  }
+  await loadLab();
+  populateEditor();
+  $("subStatus").textContent="Subjects saved online ✓";
+}
+
+async function addSubject(){
+  if(subjects.length >= 15){alert("Maximum 15 subjects.");return}
+  if(!lab){alert("Create the lab first.");return}
+
+  const {data:s,error} = await sb.from("subjects").insert({
+    lab_id:lab.id,
+    name:"New Subject",
+    icon:"📘",
+    position:subjects.length
+  }).select().single();
+
+  if(error){$("subStatus").textContent="Add failed: "+error.message;return}
+
+  const rows = Array.from({length:15},(_,n)=>({
+    subject_id:s.id,
+    experiment_number:n+1,
+    name:`Experiment ${String(n+1).padStart(2,"0")}`,
+    aim:"Add the aim here.",
+    theory:"Add theory here.",
+    code:"// Paste your code here",
+    result:"Add the result here.",
+    screenshots:[]
+  }));
+
+  const {error:expError} = await sb.from("experiments").insert(rows);
+  if(expError){$("subStatus").textContent="Experiment creation failed: "+expError.message;return}
+
+  await loadLab();
+  populateEditor();
+  $("subStatus").textContent="Subject added online ✓";
+}
+
+async function signIn(){
+  $("authStatus").textContent = "Signing in…";
+  const {error} = await sb.auth.signInWithPassword({
     email:$("email").value.trim(),
     password:$("password").value
   });
-  if(r.error){$("authMsg").textContent="Error: "+r.error.message;return}
-  $("authMsg").textContent="Signed in ✓";
-  setTimeout(()=>location.reload(),500);
-};
+  if(error){$("authStatus").textContent="Error: "+error.message;return}
+  $("authModal").classList.add("hidden");
+  await refreshSession();
+}
 
-$("signup").onclick=async()=>{
-  $("authMsg").textContent="Creating account…";
-  const r=await client.auth.signUp({
+async function signUp(){
+  $("authStatus").textContent = "Creating account…";
+  const {error} = await sb.auth.signUp({
     email:$("email").value.trim(),
     password:$("password").value
   });
-  if(r.error){$("authMsg").textContent="Error: "+r.error.message;return}
-  $("authMsg").textContent="Account created. Check your email if confirmation is enabled.";
+  if(error){$("authStatus").textContent="Error: "+error.message;return}
+  $("authStatus").textContent = "Account created. Check your email if confirmation is enabled.";
+}
+
+$("authBtn").onclick = async () => {
+  const {data:{session}} = await sb.auth.getSession();
+  if(session){await sb.auth.signOut();location.reload()}
+  else $("authModal").classList.remove("hidden");
+};
+$("closeAuth").onclick = () => $("authModal").classList.add("hidden");
+$("signIn").onclick = signIn;
+$("signUp").onclick = signUp;
+$("editBtn").onclick = openEditor;
+$("closeEditor").onclick = () => $("editorModal").classList.add("hidden");
+$("editSubject").onchange = populateExperimentSelect;
+$("editExperiment").onchange = loadEditorFields;
+$("saveExperiment").onclick = saveExperiment;
+$("resetExperiment").onclick = loadEditorFields;
+$("saveSubjects").onclick = saveSubjects;
+$("addSubject").onclick = addSubject;
+$("closeDetail").onclick = () => $("detailModal").classList.add("hidden");
+$("detailModal").onclick = e => { if(e.target === $("detailModal")) $("detailModal").classList.add("hidden"); };
+$("copyCode").onclick = async () => {
+  await navigator.clipboard.writeText(currentExperiment.code);
+  $("copyCode").textContent = "Copied!";
+  setTimeout(() => $("copyCode").textContent = "Copy Code", 1000);
+};
+$("search").oninput = e => renderSubjects(e.target.value);
+$("backBtn").onclick = () => {
+  $("experimentsView").classList.add("hidden");
+  $("subjectsView").classList.remove("hidden");
+  scrollTo(0,0);
+};
+$("expTab").onclick = () => {
+  $("expPane").classList.remove("hidden"); $("subPane").classList.add("hidden");
+  $("expTab").classList.add("active"); $("subTab").classList.remove("active");
+};
+$("subTab").onclick = () => {
+  $("subPane").classList.remove("hidden"); $("expPane").classList.add("hidden");
+  $("subTab").classList.add("active"); $("expTab").classList.remove("active");
 };
 
-refreshSession();
-checkConnection();
+sb.auth.onAuthStateChange(async () => {
+  await refreshSession();
+});
+
+(async () => {
+  await refreshSession();
+  await loadLab();
+})();
 </script>
 </body>
 </html>
