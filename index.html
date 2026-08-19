@@ -6,237 +6,109 @@
 <title>Aaditya's Lab Hub</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-*{box-sizing:border-box}:root{--bg:#0b0d12;--panel:#12151d;--panel2:#191e28;--text:#f4f6fa;--muted:#9aa3b2;--line:#292f3b;--accent:#7c9cff}
-body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
-.hero{padding:24px 7vw 65px;border-bottom:1px solid var(--line);background:radial-gradient(circle at 75% 20%,rgba(124,156,255,.18),transparent 35%);min-height:430px}
-nav,.actions,.head,.row{display:flex;justify-content:space-between;align-items:center;gap:10px}.brand{font-weight:900;letter-spacing:2px}.brand span,.label,.meta{color:var(--accent)}
-.btn{border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:10px;padding:9px 13px;cursor:pointer}.primary{background:var(--accent);color:#07101f;border:0;font-weight:800}
-.hero-content{text-align:center;max-width:820px;margin:75px auto 0}.label{font-size:11px;font-weight:900;letter-spacing:2px}
-h1{font-size:clamp(50px,8vw,90px);line-height:.95;letter-spacing:-4px;margin:12px 0}h1 span{color:var(--accent)}h2{font-size:32px}.muted{color:var(--muted);line-height:1.6}
-.search{width:min(650px,100%);padding:16px 18px;margin-top:14px;background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:14px;font-size:16px}
-main{max-width:1150px;margin:auto;padding:50px 7vw 70px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:22px}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:17px;padding:21px;cursor:pointer}.card:hover{border-color:var(--accent);transform:translateY(-2px)}.icon{font-size:30px}.title{font-size:21px;font-weight:800;margin-top:12px}.meta{font-size:12px;font-weight:800;margin-top:15px}
-.hidden{display:none!important}.modal{position:fixed;inset:0;background:rgba(0,0,0,.78);display:grid;place-items:center;padding:18px;z-index:20}.panel{width:min(980px,100%);max-height:94vh;overflow:auto;background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:24px}
-.section{margin-top:26px}.codehead{display:flex;justify-content:space-between;align-items:center}pre{margin:0;background:var(--panel2);border:1px solid var(--line);padding:18px;border-radius:13px;overflow:auto;white-space:pre-wrap}
-.shots{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}.shot{background:var(--panel2);padding:10px;border:1px solid var(--line);border-radius:12px}.shot img{width:100%;display:block;border-radius:8px}
-input,textarea,select{display:block;width:100%;margin-top:6px;padding:10px;background:var(--panel2);color:var(--text);border:1px solid var(--line);border-radius:10px;font:inherit}label{display:block;margin:13px 0;font-size:13px;font-weight:700}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.tabs{display:flex;gap:8px;margin:18px 0}.tab.active{border-color:var(--accent);color:var(--accent)}
-.subjectrow{display:grid;grid-template-columns:1fr 2fr 100px;gap:8px;margin:8px 0}.export{margin-top:22px;padding:18px;border:1px solid var(--line);background:var(--panel2);border-radius:13px}.status{margin:12px 0;padding:10px;border-radius:10px;background:var(--panel2);color:var(--muted)}
-footer{border-top:1px solid var(--line);padding:24px 7vw;color:var(--muted);font-size:13px}
-@media(max-width:700px){.formgrid,.subjectrow{grid-template-columns:1fr}.hero{min-height:400px}h1{letter-spacing:-2px}}
+body{margin:0;background:#0b0d12;color:#f4f6fa;font-family:system-ui,sans-serif}
+.wrap{max-width:1000px;margin:auto;padding:40px 6vw}
+header{padding:30px 0 50px}h1{font-size:60px;line-height:.95;margin:10px 0}h1 span{color:#7c9cff}
+p{color:#9aa3b2}.bar{display:flex;justify-content:space-between;align-items:center}
+button{background:#12151d;border:1px solid #292f3b;color:#fff;border-radius:10px;padding:10px 14px;cursor:pointer}
+button.primary{background:#7c9cff;color:#07101f;border:0;font-weight:700}
+.status{padding:12px 15px;border-radius:10px;background:#12151d;border:1px solid #292f3b;margin:20px 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+.card{background:#12151d;border:1px solid #292f3b;border-radius:16px;padding:20px;cursor:pointer}
+.card:hover{border-color:#7c9cff}.icon{font-size:30px}.title{font-size:21px;font-weight:800;margin-top:12px}
+.modal{position:fixed;inset:0;background:#000b;display:grid;place-items:center;padding:18px}.panel{width:min(560px,100%);background:#12151d;border:1px solid #292f3b;border-radius:18px;padding:24px}
+.hidden{display:none}input,textarea,select{width:100%;box-sizing:border-box;background:#191e28;color:#fff;border:1px solid #292f3b;border-radius:10px;padding:10px;margin-top:6px}
+label{display:block;margin:12px 0;font-weight:700;font-size:13px}
 </style>
 </head>
 <body>
-<header class="hero">
-<nav>
-<div class="brand">LAB<span>HUB</span></div>
-<div class="actions"><button id="editBtn" class="btn hidden">✏️ Edit Lab</button><button id="loginBtn" class="btn">🔐 Sign in</button></div>
-</nav>
-<div class="hero-content">
-<div class="label">ENGINEERING LABORATORY</div>
-<h1>Aaditya's<br><span>Lab Hub</span></h1>
-<p class="muted">Your experiments, code, screenshots and results — saved online.</p>
-<input id="search" class="search" placeholder="Search subjects or experiments...">
-</div>
+<div class="wrap">
+<header>
+<div class="bar"><b>LAB<span style="color:#7c9cff">HUB</span></b><div><button id="editBtn" class="hidden">Edit Lab</button><button id="loginBtn">Sign in</button></div></div>
+<div style="margin-top:60px"><small style="color:#7c9cff;letter-spacing:2px;font-weight:800">ENGINEERING LABORATORY</small><h1>Aaditya's<br><span>Lab Hub</span></h1><p>Online experiments, code, screenshots and results.</p></div>
 </header>
-
-<main>
-<section id="subjectsView"><div class="label">SUBJECTS</div><div id="connectionStatus" class="status">Connecting to online Lab Hub…</div><div id="subjects" class="grid"></div></section>
-<section id="experimentsView" class="hidden"><div class="head"><div><div class="label">EXPERIMENTS</div><h2 id="subjectName"></h2></div><button id="backBtn" class="btn">← Subjects</button></div><div id="experiments" class="grid"></div></section>
-</main>
-
-<div id="detail" class="modal hidden"><div class="panel">
-<div class="row"><div><div id="dSubject" class="label"></div><h2 id="dTitle"></h2></div><button id="closeDetail" class="btn">×</button></div>
-<div class="section"><h3>Aim</h3><p id="dAim" class="muted"></p></div><div class="section"><h3>Theory</h3><p id="dTheory" class="muted"></p></div>
-<div class="section"><div class="codehead"><h3>Code</h3><button id="copy" class="btn primary">Copy Code</button></div><pre id="dCode"></pre></div>
-<div class="section"><h3>Output / Screenshots</h3><div id="dShots" class="shots"></div></div><div class="section"><h3>Result</h3><p id="dResult" class="muted"></p></div>
-</div></div>
-
-<div id="auth" class="modal hidden"><div class="panel" style="max-width:500px">
-<div class="row"><h2>Lab Hub Login</h2><button id="closeAuth" class="btn">×</button></div>
-<p class="muted">Sign in to edit your lab. Your public experiments remain viewable without signing in.</p>
-<label>Email<input id="email" type="email" autocomplete="email"></label>
-<label>Password<input id="password" type="password" autocomplete="current-password"></label>
-<div class="actions"><button id="signIn" class="btn primary">Sign in</button><button id="signUp" class="btn">Create account</button></div>
-<div id="authStatus" class="status"></div>
-</div></div>
-
-<div id="editor" class="modal hidden"><div class="panel">
-<div class="row"><div><div class="label">ONLINE EDITOR</div><h2>Edit Lab</h2><p class="muted">Changes save directly to the online database.</p></div><button id="closeEditor" class="btn">×</button></div>
-<div class="tabs"><button id="tabExp" class="btn tab active">Experiments</button><button id="tabSub" class="btn tab">Subjects</button></div>
-<div id="expEditor">
-<div class="formgrid"><label>Subject<select id="eSubject"></select></label><label>Experiment<select id="eNumber"></select></label></div>
-<label>Experiment name<input id="eName"></label><label>Aim<textarea id="eAim" rows="3"></textarea></label><label>Theory<textarea id="eTheory" rows="5"></textarea></label><label>Code<textarea id="eCode" rows="12"></textarea></label><label>Result<textarea id="eResult" rows="3"></textarea></label>
-<label>Upload screenshots<input id="eFiles" type="file" accept="image/*" multiple></label><div id="eShots" class="shots"></div>
-<div class="actions"><button id="saveExp" class="btn primary">Save Online</button><button id="resetExp" class="btn">Reset</button></div>
-<div id="saveStatus" class="status"></div>
+<div id="status" class="status">Connecting to Supabase…</div>
+<div id="subjects" class="grid"></div>
 </div>
-<div id="subEditor" class="hidden"><div id="subRows"></div><div class="actions"><button id="addSub" class="btn primary">＋ Add Subject</button><button id="saveSub" class="btn">Save Subjects Online</button></div><div id="subStatus" class="status"></div></div>
-</div></div>
 
-<footer>Lab Hub · Online database and screenshot storage</footer>
+<div id="auth" class="modal hidden"><div class="panel">
+<div class="bar"><h2>Lab Hub Login</h2><button id="closeAuth">×</button></div>
+<p>Sign in to edit your lab. Viewing is public.</p>
+<label>Email<input id="email" type="email"></label>
+<label>Password<input id="password" type="password"></label>
+<div><button id="signin" class="primary">Sign in</button> <button id="signup">Create account</button></div>
+<div id="authMsg" class="status"></div>
+</div></div>
 
 <script>
 const SUPABASE_URL="https://mosllsrduvscosldetiy.supabase.co";
-const SUPABASE_KEY="sb_publishable_6Fm5YRVASWUiCYZ0X-czxQ_QRTcWajC";
-const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
-let lab=null,subjects=[],experiments=[],currentSubject=null,currentExperiment=null;
+const SUPABASE_PUBLISHABLE_KEY="sb_publishable_6FmY5RVASWUiCYZ0X-czxQ_QRTcWajC";
+const client=supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
 
 const $=id=>document.getElementById(id);
-const esc=v=>String(v??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;");
 
-async function loadPublic(){
-  const status=$("connectionStatus");
-  try{
-    status.textContent="Connecting to online Lab Hub…";
-    const {data:labs,error}=await sb.from("labs").select("*").limit(1);
-    if(error) throw error;
-    lab=labs?.[0]||null;
-    if(!lab){
-      status.textContent="No lab has been created yet. Sign in and click Edit Lab.";
-      $("subjects").innerHTML="";
-      return;
-    }
-    const {data:s,error:se}=await sb.from("subjects").select("*").eq("lab_id",lab.id).order("position");
-    if(se) throw se;
-    subjects=s||[];
-    const ids=subjects.map(x=>x.id);
-    experiments=[];
-    if(ids.length){
-      const {data:e,error:ee}=await sb.from("experiments").select("*").in("subject_id",ids).order("experiment_number");
-      if(ee) throw ee;
-      experiments=e||[];
-    }
-    status.classList.add("hidden");
-    renderSubjects();
-  }catch(error){
-    console.error("Lab Hub connection error:",error);
-    status.classList.remove("hidden");
-    status.textContent="Could not connect to the online database. Please refresh the page. If this is your first setup, sign in and create the lab.";
+async function checkConnection(){
+  const status=$("status");
+  const result=await client.from("labs").select("id,name").limit(1);
+  if(result.error){
+    console.error(result.error);
+    status.textContent="Supabase connection error: "+result.error.message;
+    status.style.color="#ff8d8d";
+    return;
+  }
+  status.textContent="Online database connected ✓";
+  status.style.color="#9cffb0";
+  renderLabs(result.data||[]);
+}
+
+function renderLabs(labs){
+  const box=$("subjects");
+  if(!labs.length){
+    box.innerHTML='<div class="card"><div class="title">Your lab is ready to be created</div><p>Sign in and click Edit Lab to create it.</p></div>';
+    return;
+  }
+  box.innerHTML=labs.map(l=>`<div class="card"><div class="icon">👤</div><div class="title">${escapeHtml(l.name)}</div><p>Online lab storage is active.</p></div>`).join("");
+}
+
+function escapeHtml(v){
+  return String(v).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;");
+}
+
+async function refreshSession(){
+  const {data}=await client.auth.getSession();
+  if(data.session){
+    $("editBtn").classList.remove("hidden");
+    $("loginBtn").textContent="Sign out";
+    $("loginBtn").onclick=async()=>{await client.auth.signOut();location.reload()};
   }
 }
 
-function renderSubjects(q=""){
- q=q.toLowerCase().trim();
- const arr=subjects.filter(s=>s.name.toLowerCase().includes(q)||experiments.some(e=>e.subject_id===s.id&&e.name.toLowerCase().includes(q)));
- $("subjects").innerHTML=arr.map(s=>`<article class="card" data-id="${s.id}"><div class="icon">${esc(s.icon)}</div><div class="title">${esc(s.name)}</div><p class="muted">15 experiments with code, screenshots and results.</p><div class="meta">01 — 15 experiments →</div></article>`).join("")||'<p class="muted">No subjects found.</p>';
- document.querySelectorAll("#subjects .card").forEach(c=>c.onclick=()=>openSubject(c.dataset.id));
-}
+$("loginBtn").onclick=()=>{$("auth").classList.remove("hidden")};
+$("closeAuth").onclick=()=>{$("auth").classList.add("hidden")};
 
-function openSubject(id){
- currentSubject=subjects.find(s=>s.id===id);if(!currentSubject)return;
- const es=experiments.filter(e=>e.subject_id===id).sort((a,b)=>a.experiment_number-b.experiment_number);
- $("subjectName").textContent=currentSubject.name;
- $("experiments").innerHTML=es.map(e=>`<article class="card" data-id="${e.id}"><div class="label">EXPERIMENT ${String(e.experiment_number).padStart(2,"0")}</div><div class="title">${esc(e.name)}</div><p class="muted">Open details, code and screenshots.</p></article>`).join("");
- document.querySelectorAll("#experiments .card").forEach(c=>c.onclick=()=>openDetail(c.dataset.id));
- $("subjectsView").classList.add("hidden");$("experimentsView").classList.remove("hidden");scrollTo(0,0);
-}
+$("signin").onclick=async()=>{
+  $("authMsg").textContent="Signing in…";
+  const r=await client.auth.signInWithPassword({
+    email:$("email").value.trim(),
+    password:$("password").value
+  });
+  if(r.error){$("authMsg").textContent="Error: "+r.error.message;return}
+  $("authMsg").textContent="Signed in ✓";
+  setTimeout(()=>location.reload(),500);
+};
 
-async function openDetail(id){
- currentExperiment=experiments.find(e=>e.id===id);if(!currentExperiment)return;
- $("dSubject").textContent=currentSubject.name;$("dTitle").textContent=currentExperiment.name;$("dAim").textContent=currentExperiment.aim;$("dTheory").textContent=currentExperiment.theory;$("dCode").textContent=currentExperiment.code;$("dResult").textContent=currentExperiment.result;
- const shots=Array.isArray(currentExperiment.screenshots)?currentExperiment.screenshots:[];
- $("dShots").innerHTML=shots.map(url=>`<div class="shot"><img src="${esc(url)}" alt="Output screenshot"></div>`).join("")||'<div class="shot" style="min-height:100px;display:grid;place-items:center;color:var(--muted)">No screenshots added.</div>';
- $("detail").classList.remove("hidden");
-}
+$("signup").onclick=async()=>{
+  $("authMsg").textContent="Creating account…";
+  const r=await client.auth.signUp({
+    email:$("email").value.trim(),
+    password:$("password").value
+  });
+  if(r.error){$("authMsg").textContent="Error: "+r.error.message;return}
+  $("authMsg").textContent="Account created. Check your email if confirmation is enabled.";
+};
 
-async function ensureLab(user){
- let {data:labs}=await sb.from("labs").select("*").eq("owner_id",user.id).limit(1);
- if(labs?.length)return labs[0];
- const {data:newLab,error}=await sb.from("labs").insert({owner_id:user.id,name:"Aaditya's Lab Hub"}).select().single();
- if(error)throw error;
- const seed=[["vlsi","VLSI","🔌"],["arm","ARM","⚙️"],["os","OS","💿"],["coa","COA","💻"],["instrumentation","Instrumentation","🤖"]];
- for(let i=0;i<seed.length;i++){
-   const {data:s,error:se}=await sb.from("subjects").insert({lab_id:newLab.id,name:seed[i][1],icon:seed[i][2],position:i}).select().single();
-   if(se)throw se;
-   const rows=Array.from({length:15},(_,n)=>({subject_id:s.id,experiment_number:n+1,name:`Experiment ${String(n+1).padStart(2,"0")}`,aim:"Add the aim here.",theory:"Add theory here.",code:"// Paste your code here",result:"Add the result here.",screenshots:[]}));
-   const {error:ee}=await sb.from("experiments").insert(rows);if(ee)throw ee;
- }
- return newLab;
-}
-
-async function openEditor(){
- const {data:{user}}=await sb.auth.getUser();
- if(!user){$("auth").classList.remove("hidden");return}
- try{lab=await ensureLab(user);await loadPublic();fillEditor();$("editor").classList.remove("hidden")}catch(e){alert("Could not initialize the lab: "+e.message)}
-}
-
-function fillEditor(){
- $("eSubject").innerHTML=subjects.map(s=>`<option value="${s.id}">${esc(s.name)}</option>`).join("");
- if(currentSubject)$("eSubject").value=currentSubject.id;
- fillNumbers();renderSubjectEditor();
-}
-function fillNumbers(){
- const s=subjects.find(x=>x.id===$("eSubject").value);if(!s)return;
- const es=experiments.filter(e=>e.subject_id===s.id).sort((a,b)=>a.experiment_number-b.experiment_number);
- $("eNumber").innerHTML=es.map(e=>`<option value="${e.id}">${String(e.experiment_number).padStart(2,"0")} — ${esc(e.name)}</option>`).join("");
- loadEditorFields();
-}
-function loadEditorFields(){
- currentSubject=subjects.find(s=>s.id===$("eSubject").value);currentExperiment=experiments.find(e=>e.id===$("eNumber").value);if(!currentExperiment)return;
- $("eName").value=currentExperiment.name;$("eAim").value=currentExperiment.aim;$("eTheory").value=currentExperiment.theory;$("eCode").value=currentExperiment.code;$("eResult").value=currentExperiment.result;renderEditorShots();
-}
-function renderEditorShots(){
- $("eShots").innerHTML=(currentExperiment?.screenshots||[]).map((url,i)=>`<div class="shot"><img src="${esc(url)}"><button class="btn removeShot" data-i="${i}">Remove</button></div>`).join("");
- document.querySelectorAll(".removeShot").forEach(b=>b.onclick=async()=>{const url=currentExperiment.screenshots.splice(Number(b.dataset.i),1)[0];const path=url.split("/lab-screenshots/")[1];if(path)await sb.storage.from("lab-screenshots").remove([path]);await sb.from("experiments").update({screenshots:currentExperiment.screenshots,updated_at:new Date().toISOString()}).eq("id",currentExperiment.id);renderEditorShots()});
-}
-async function saveExperiment(){
- if(!currentExperiment)return;
- $("saveStatus").textContent="Saving...";
- const shots=[...(currentExperiment.screenshots||[])];
- for(const file of [...$("eFiles").files]){
-   const path=`${(await sb.auth.getUser()).data.user.id}/${currentExperiment.id}/${crypto.randomUUID()}-${file.name.replace(/[^a-zA-Z0-9._-]/g,"_")}`;
-   const {error}=await sb.storage.from("lab-screenshots").upload(path,file,{upsert:false});
-   if(error){$("saveStatus").textContent="Upload failed: "+error.message;return}
-   const {data}=sb.storage.from("lab-screenshots").getPublicUrl(path);
-   shots.push(data.publicUrl);
- }
- const update={name:$("eName").value.trim()||currentExperiment.name,aim:$("eAim").value,theory:$("eTheory").value,code:$("eCode").value,result:$("eResult").value,screenshots:shots,updated_at:new Date().toISOString()};
- const {data,error}=await sb.from("experiments").update(update).eq("id",currentExperiment.id).select().single();
- if(error){$("saveStatus").textContent="Save failed: "+error.message;return}
- Object.assign(currentExperiment,data);$("eFiles").value="";$("saveStatus").textContent="Saved online ✓";renderEditorShots();renderSubjects($("search").value);openSubject(currentSubject.id);
-}
-
-function renderSubjectEditor(){
- $("subRows").innerHTML=subjects.map((s,i)=>`<div class="subjectrow" data-id="${s.id}"><input value="${esc(s.id)}" disabled><input class="sname" value="${esc(s.name)}"><input class="sicon" value="${esc(s.icon)}"></div>`).join("");
-}
-async function saveSubjects(){
- for(const row of document.querySelectorAll(".subjectrow")){
-   const id=row.dataset.id,name=row.querySelector(".sname").value.trim(),icon=row.querySelector(".sicon").value.trim()||"📘";
-   const {error}=await sb.from("subjects").update({name,icon,updated_at:new Date().toISOString()}).eq("id",id);if(error){$("subStatus").textContent=error.message;return}
- }
- $("subStatus").textContent="Subjects saved online ✓";await loadPublic();fillEditor();
-}
-async function addSubject(){
- if(subjects.length>=15){alert("Maximum 15 subjects.");return}
- const {data:s,error}=await sb.from("subjects").insert({lab_id:lab.id,name:"New Subject",icon:"📘",position:subjects.length}).select().single();if(error){alert(error.message);return}
- const rows=Array.from({length:15},(_,n)=>({subject_id:s.id,experiment_number:n+1,name:`Experiment ${String(n+1).padStart(2,"0")}`,aim:"Add the aim here.",theory:"Add theory here.",code:"// Paste your code here",result:"Add the result here.",screenshots:[]}));
- const {error:ee}=await sb.from("experiments").insert(rows);if(ee){alert(ee.message);return}
- await loadPublic();fillEditor();
-}
-async function auth(action){
- const email=$("email").value.trim(),password=$("password").value;
- $("authStatus").textContent="Working...";
- const r=action==="signup"?await sb.auth.signUp({email,password}):await sb.auth.signInWithPassword({email,password});
- if(r.error){$("authStatus").textContent="Error: "+r.error.message;return}
- $("authStatus").textContent=action==="signup"?"Account created. Check your email if confirmation is required.":"Signed in ✓";
- if(r.data.user){$("auth").classList.add("hidden");$("editBtn").classList.remove("hidden")}
-}
-async function session(){
- const {data:{session}}=await sb.auth.getSession();
- if(session){$("editBtn").classList.remove("hidden");$("loginBtn").textContent="Sign out";$("loginBtn").onclick=async()=>{await sb.auth.signOut();location.reload()}}
-}
-$("search").oninput=e=>renderSubjects(e.target.value);
-$("backBtn").onclick=()=>{$("experimentsView").classList.add("hidden");$("subjectsView").classList.remove("hidden");scrollTo(0,0)};
-$("closeDetail").onclick=()=>$("detail").classList.add("hidden");$("detail").onclick=e=>{if(e.target===$("detail"))$("detail").classList.add("hidden")};
-$("copy").onclick=async()=>{try{await navigator.clipboard.writeText(currentExperiment.code);$("copy").textContent="Copied!";setTimeout(()=>$("copy").textContent="Copy Code",1000)}catch{}};
-$("editBtn").onclick=openEditor;$("closeEditor").onclick=()=>$("editor").classList.add("hidden");
-$("eSubject").onchange=fillNumbers;$("eNumber").onchange=loadEditorFields;$("saveExp").onclick=saveExperiment;$("resetExp").onclick=()=>loadEditorFields();$("saveSub").onclick=saveSubjects;$("addSub").onclick=addSubject;
-$("tabExp").onclick=()=>{$("expEditor").classList.remove("hidden");$("subEditor").classList.add("hidden");$("tabExp").classList.add("active");$("tabSub").classList.remove("active")};
-$("tabSub").onclick=()=>{$("subEditor").classList.remove("hidden");$("expEditor").classList.add("hidden");$("tabSub").classList.add("active");$("tabExp").classList.remove("active")};
-$("loginBtn").onclick=()=>{if($("loginBtn").textContent.includes("Sign out")){sb.auth.signOut().then(()=>location.reload())}else $("auth").classList.remove("hidden")};
-$("closeAuth").onclick=()=>$("auth").classList.add("hidden");$("signIn").onclick=()=>auth("signin");$("signUp").onclick=()=>auth("signup");
-
-loadPublic();session();
+refreshSession();
+checkConnection();
 </script>
 </body>
 </html>
