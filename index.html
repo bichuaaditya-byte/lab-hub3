@@ -38,7 +38,7 @@ input,textarea,select{width:100%;margin-top:6px;padding:11px;border-radius:10px;
 </head>
 <body>
 
-<div id="siteLock" class="site-lock">
+<div id="siteLock" class="site-lock" style="display:grid;">
   <div class="lock-card">
     <div class="lock-icon">🔒</div>
     <div class="label">PRIVATE LABORATORY</div>
@@ -50,10 +50,11 @@ input,textarea,select{width:100%;margin-top:6px;padding:11px;border-radius:10px;
       <button id="lockSignIn" class="btn primary">Sign in</button>
       <button id="lockSignUp" class="btn">Create account</button>
     </div>
-    <div id="lockStatus" class="status"></div>
+    <div id="lockStatus" class="status">Checking your session…</div>
   </div>
 </div>
 
+<div id="privateApp" style="display:none">
 <header>
 <nav>
   <div class="brand">LAB<span>HUB</span></div>
@@ -218,14 +219,20 @@ async function loadLab(){
 }
 
 function lockSite(){
-  $("privateApp").style.display="none";
-  $("siteLock").style.display="grid";
-  $("editBtn").classList.add("hidden");
-  $("authBtn").textContent="🔐 Sign in";
+  const app=$("privateApp");
+  const lock=$("siteLock");
+  if(app) app.style.display="none";
+  if(lock) lock.style.display="grid";
+  const edit=$("editBtn");
+  const auth=$("authBtn");
+  if(edit) edit.classList.add("hidden");
+  if(auth) auth.textContent="🔐 Sign in";
 }
 function unlockSite(){
-  $("siteLock").style.display="none";
-  $("privateApp").style.display="block";
+  const lock=$("siteLock");
+  const app=$("privateApp");
+  if(lock) lock.style.display="none";
+  if(app) app.style.display="block";
 }
 async function lockedSignIn(){
   $("lockStatus").textContent="Signing in…";
