@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Aaditya's Lab Hub</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js"></script>
 <style>
 *{box-sizing:border-box}
 :root{--bg:#0b0d12;--panel:#12151d;--panel2:#191e28;--text:#f4f6fa;--muted:#9aa3b2;--line:#292f3b;--accent:#7c9cff;--danger:#ff7b7b;--ok:#8fe3a1}
@@ -104,7 +104,7 @@ input,textarea,select{width:100%;margin-top:6px;padding:11px;border-radius:10px;
 <!-- Detail -->
 <div id="detailModal" class="modal hidden">
   <div class="panel">
-    <div class="row"><div><div id="detailSubject" class="label"></div><h2 id="detailTitle"></h2></div><button id="closeDetail" class="btn">×</button></div>
+    <div class="row"><div><div id="detailSubject" class="label"></div><h2 id="detailTitle"></h2></div><div class="actions"><button id="generatePdf" class="btn primary">📄 Generate PDF</button><button id="closeDetail" class="btn">×</button></div></div>
     <div class="section"><h3>Aim</h3><p id="detailAim" class="muted"></p></div>
     <div class="section"><h3>Theory</h3><p id="detailTheory" class="muted"></p></div>
     <div class="section"><div class="codehead"><h3>Code</h3><button id="copyCode" class="btn primary">Copy Code</button></div><pre id="detailCode"></pre></div>
@@ -591,6 +591,101 @@ async function signUp(){
   $("authStatus").textContent = "Account created. Check your email if confirmation is enabled.";
 }
 
+
+function pdfDetails(){
+  return {
+    name:localStorage.getItem("labhub_pdf_name")||"Aaditya Bichu",
+    roll:localStorage.getItem("labhub_pdf_roll")||"24EC01"
+  };
+}
+async function screenshotBlob(path){
+  let url=path;
+  if(!/^https?:\/\//i.test(path)){
+    const r=await sb.storage.from("lab-screenshots").createSignedUrl(path,3600);
+    if(r.error) throw r.error;
+    url=r.data.signedUrl;
+  }
+  const r=await fetch(url);
+  if(!r.ok) throw new Error("Could not download screenshot");
+  return await r.blob();
+}
+function blobDataURL(blob){
+  return new Promise((resolve,reject)=>{
+    const r=new FileReader();
+    r.onload=()=>resolve(r.result);
+    r.onerror=reject;
+    r.readAsDataURL(blob);
+  });
+}
+async function addImage(doc,data,x,y,maxW,maxH){
+  return new Promise(resolve=>{
+    const img=new Image();
+    img.onload=()=>{
+      const scale=Math.min(maxW/img.naturalWidth,maxH/img.naturalHeight,1);
+      const w=img.naturalWidth*scale,h=img.naturalHeight*scale;
+      doc.addImage(data,"JPEG",x,y,w,h);
+      resolve(h);
+    };
+    img.onerror=()=>resolve(0);
+    img.src=data;
+  });
+}
+async function generateExperimentPdf(){
+  const {jsPDF}=window.jspdf||{};
+  if(!jsPDF){alert("PDF library did not load. Refresh and try again.");return;}
+  if(!currentExperiment)return;
+  const d=pdfDetails(),doc=new jsPDF({unit:"mm",format:"a4"});
+  const W=210,H=297,M=18,C=W-2*M;
+  let y=20;
+
+  doc.setFont("helvetica","bold");doc.setFontSize(18);
+  doc.text("LABORATORY EXPERIMENT",M,y);y+=11;
+  doc.setFontSize(13);
+  doc.text("Experiment "+String(currentExperiment.experiment_number).padStart(2,"0"),M,y);y+=8;
+  doc.setFont("helvetica","normal");doc.setFontSize(11);
+  doc.text("Name: "+d.name,M,y);y+=7;
+  doc.text("Roll Number: "+d.roll,M,y);y+=7;
+  doc.text("Subject: "+(currentSubject?.name||""),M,y);y+=10;
+  doc.setFont("helvetica","bold");doc.setFontSize(14);
+  const title=doc.splitTextToSize(currentExperiment.name||"Experiment",C);
+  doc.text(title,M,y);y+=title.length*7+8;
+
+  doc.text("CODE",M,y);y+=7;
+  doc.setFont("courier","normal");doc.setFontSize(8.5);
+  const lines=doc.splitTextToSize(String(currentExperiment.code||""),C-6),lh=4.2;
+  let i=0;
+  while(i<lines.length){
+    if(y>H-M-18){doc.addPage();y=20;doc.setFont("helvetica","bold");doc.setFontSize(13);doc.text("CODE (continued)",M,y);y+=8;doc.setFont("courier","normal");doc.setFontSize(8.5);}
+    const n=Math.max(1,Math.floor((H-M-y-8)/lh)),chunk=lines.slice(i,i+n);
+    doc.setFillColor(245,246,248);doc.roundedRect(M,y-4,C,chunk.length*lh+7,2,2,"F");
+    doc.setTextColor(25,28,35);doc.text(chunk,M+3,y);doc.setTextColor(0,0,0);
+    y+=chunk.length*lh+10;i+=chunk.length;
+  }
+
+  const shots=currentExperiment.screenshots||[];
+  if(shots.length){
+    doc.addPage();y=20;doc.setFont("helvetica","bold");doc.setFontSize(14);doc.text("OUTPUT / SCREENSHOTS",M,y);y+=10;
+    let num=1;
+    for(const path of shots){
+      try{
+        const data=await blobDataURL(await screenshotBlob(path));
+        if(y>H-65){doc.addPage();y=20;doc.setFont("helvetica","bold");doc.setFontSize(14);doc.text("OUTPUT / SCREENSHOTS (continued)",M,y);y+=10;}
+        doc.setFont("helvetica","normal");doc.setFontSize(10);doc.text("Output "+num,M,y);y+=6;
+        y+=(await addImage(doc,data,M,y,C,H-M-y-10))+12;num++;
+      }catch(e){console.warn("Skipping screenshot",e);}
+    }
+  }
+
+  const total=doc.getNumberOfPages();
+  for(let p=1;p<=total;p++){
+    doc.setPage(p);doc.setFont("helvetica","normal");doc.setFontSize(8);doc.setTextColor(110,115,125);
+    doc.text("Lab Hub • "+d.name+" • "+d.roll,M,H-9);
+    doc.text("Page "+p+" of "+total,W-M,H-9,{align:"right"});doc.setTextColor(0,0,0);
+  }
+  const n=String(currentExperiment.experiment_number).padStart(2,"0");
+  const safe=(currentExperiment.name||"Experiment").replace(/[^a-z0-9]+/gi,"_").replace(/^_|_$/g,"");
+  doc.save("Experiment_"+n+"_"+safe+".pdf");
+}
 $("authBtn").onclick = async () => {
   const {data:{session}} = await sb.auth.getSession();
   if(session){await sb.auth.signOut();lockSite();$("subjects").innerHTML="";}
@@ -609,6 +704,18 @@ $("saveSubjects").onclick = saveSubjects;
 $("addSubject").onclick = addSubject;
 $("closeDetail").onclick = () => $("detailModal").classList.add("hidden");
 $("detailModal").onclick = e => { if(e.target === $("detailModal")) $("detailModal").classList.add("hidden"); };
+
+$("generatePdf").onclick=async()=>{
+  const d=pdfDetails();
+  const name=prompt("Name for PDF:",d.name);
+  if(name===null)return;
+  const roll=prompt("Roll number for PDF:",d.roll);
+  if(roll===null)return;
+  localStorage.setItem("labhub_pdf_name",name.trim()||"Aaditya Bichu");
+  localStorage.setItem("labhub_pdf_roll",roll.trim()||"24EC01");
+  const b=$("generatePdf");b.disabled=true;b.textContent="Generating…";
+  try{await generateExperimentPdf();}finally{b.disabled=false;b.textContent="📄 Generate PDF";}
+};
 $("copyCode").onclick = async () => {
   await navigator.clipboard.writeText(currentExperiment.code);
   $("copyCode").textContent = "Copied!";
