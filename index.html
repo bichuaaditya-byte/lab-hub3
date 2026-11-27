@@ -2,38 +2,144 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0a0c11">
 <title>Aaditya's Lab Hub</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js"></script>
 <style>
 *{box-sizing:border-box}
-:root{--bg:#0b0d12;--panel:#12151d;--panel2:#191e28;--text:#f4f6fa;--muted:#9aa3b2;--line:#292f3b;--accent:#7c9cff;--danger:#ff7b7b;--ok:#8fe3a1}
-body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
-header{padding:24px 7vw 60px;border-bottom:1px solid var(--line);background:radial-gradient(circle at 75% 20%,rgba(124,156,255,.18),transparent 35%)}
-nav,.row{display:flex;justify-content:space-between;align-items:center;gap:12px}.brand{font-weight:900;letter-spacing:2px}.brand span{color:var(--accent)}
-.actions{display:flex;gap:8px}.btn{background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:10px;padding:10px 14px;cursor:pointer}.primary{background:var(--accent);color:#07101f;border:0;font-weight:800}.danger{border-color:#603236;color:#ff9b9b}
-.hero{max-width:900px;margin:75px auto 0}.eyebrow,.label{color:var(--accent);font-size:11px;font-weight:900;letter-spacing:2px}
-h1{font-size:clamp(52px,8vw,90px);line-height:.95;letter-spacing:-4px;margin:12px 0}h1 span{color:var(--accent)}
-h2{font-size:32px}.muted{color:var(--muted);line-height:1.65}.search{width:min(650px,100%);padding:16px 18px;background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:14px;font-size:16px;margin-top:15px}
-main{max-width:1150px;margin:auto;padding:45px 7vw 70px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin-top:22px}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:17px;padding:21px;cursor:pointer}.card:hover{border-color:var(--accent);transform:translateY(-2px)}
-.icon{font-size:30px}.title{font-size:21px;font-weight:800;margin-top:12px}.meta{color:var(--accent);font-size:12px;font-weight:800;margin-top:14px}
-.status{margin:18px 0;padding:12px 15px;background:var(--panel);border:1px solid var(--line);border-radius:10px;color:var(--muted)}.status.ok{color:var(--ok)}.status.bad{color:#ffadad}
-.hidden{display:none!important}.modal{position:fixed;inset:0;background:rgba(0,0,0,.78);display:grid;place-items:center;padding:16px;z-index:30}.panel{width:min(1000px,100%);max-height:94vh;overflow:auto;background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:24px}
-.section{margin-top:26px}.codehead{display:flex;justify-content:space-between;align-items:center;gap:12px}pre{background:var(--panel2);border:1px solid var(--line);padding:18px;border-radius:13px;overflow:auto;white-space:pre-wrap}
-.shots{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}.shot{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:10px}.shot img{width:100%;display:block;border-radius:8px}
-input,textarea,select{width:100%;margin-top:6px;padding:11px;border-radius:10px;border:1px solid var(--line);background:var(--panel2);color:var(--text);font:inherit}label{display:block;margin:14px 0;font-size:13px;font-weight:700}
-.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.tabs{display:flex;gap:8px;margin:18px 0}.tab.active{color:var(--accent);border-color:var(--accent)}
-.subjectrow{display:grid;grid-template-columns:2fr 100px 70px;gap:8px;margin:8px 0}.small{font-size:12px}.empty{color:var(--muted)}
-@media(max-width:700px){.formgrid,.subjectrow{grid-template-columns:1fr}h1{letter-spacing:-2px}}
+:root{
+  --bg:#0a0c11;--panel:#11141b;--panel2:#161a23;--panel3:#1c212c;--code:#0c0f15;
+  --text:#eef1f7;--muted:#97a0b1;--line:#252b37;--line2:#343c4e;
+  --accent:#7c9cff;--accent2:#a58bff;--danger:#ff7b7b;--ok:#7ee2a0;
+  --shadow:0 18px 50px rgba(0,0,0,.45);
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.5;-webkit-font-smoothing:antialiased}
+::selection{background:rgba(124,156,255,.35)}
 
-.site-lock{position:fixed;inset:0;z-index:100;display:grid;place-items:center;padding:20px;background:rgba(6,8,13,.98)}
-.lock-card{width:min(460px,100%);padding:30px;background:var(--panel);border:1px solid var(--line);border-radius:20px}
-.lock-icon{font-size:42px;margin-bottom:14px}
-.lock-card h2{margin:8px 0;font-size:34px}
-.lock-card label{display:block;margin:14px 0;font-size:13px;font-weight:700}
-.lock-card input{display:block;width:100%;margin-top:7px;padding:12px;border-radius:10px;border:1px solid var(--line);background:var(--panel2);color:var(--text);font:inherit}
+/* ---------- Layout ---------- */
+header{padding:18px clamp(16px,6vw,80px) clamp(40px,7vw,64px);border-bottom:1px solid var(--line);
+  background:radial-gradient(circle at 85% 0%,rgba(124,156,255,.22),transparent 42%),radial-gradient(circle at 5% 100%,rgba(165,139,255,.12),transparent 40%)}
+nav{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.row{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.brand{font-weight:900;letter-spacing:2px;font-size:15px}.brand span{color:var(--accent)}
+.actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.hero{max-width:900px;margin:clamp(32px,8vw,72px) auto 0}
+.eyebrow,.label{color:var(--accent);font-size:11px;font-weight:900;letter-spacing:2px;text-transform:uppercase}
+h1{font-size:clamp(44px,9vw,88px);line-height:.95;letter-spacing:-.045em;margin:12px 0}
+h1 span{background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}
+h2{font-size:clamp(22px,4.2vw,30px);margin:4px 0;letter-spacing:-.01em;line-height:1.2}
+h3{margin:0 0 10px;font-size:16px;letter-spacing:.01em}
+.muted{color:var(--muted);line-height:1.65}
+main{max-width:1150px;margin:auto;padding:32px clamp(16px,6vw,80px) 80px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(230px,100%),1fr));gap:14px;margin-top:18px}
+
+/* ---------- Controls ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:40px;background:var(--panel2);color:var(--text);
+  border:1px solid var(--line);border-radius:11px;padding:8px 14px;cursor:pointer;font:inherit;font-size:14px;font-weight:600;
+  transition:border-color .15s,background .15s,transform .08s,filter .15s;white-space:nowrap;-webkit-tap-highlight-color:transparent}
+.btn:hover{border-color:var(--line2);background:var(--panel3)}
+.btn:active{transform:scale(.97)}
+.btn:disabled{opacity:.55;cursor:wait}
+.btn.primary{background:linear-gradient(135deg,var(--accent),#98b0ff);color:#07101f;border-color:transparent;font-weight:800}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.danger{border-color:#55292e;color:#ff9b9b}.btn.danger:hover{background:#2a1416;border-color:#7a3a40}
+.btn.sm{min-height:34px;padding:6px 10px;font-size:13px;border-radius:9px}
+.btn.icon{min-width:34px;padding:6px 8px}
+.search{width:min(650px,100%);padding:15px 18px;background:rgba(17,20,27,.85);color:var(--text);border:1px solid var(--line);border-radius:14px;font-size:16px;margin-top:16px}
+input,textarea,select{width:100%;margin-top:6px;padding:11px 12px;border-radius:10px;border:1px solid var(--line);background:var(--panel2);color:var(--text);font:inherit;font-size:16px}
+textarea{resize:vertical;line-height:1.5}
+textarea.code{font-family:var(--mono);font-size:13.5px;background:var(--code);tab-size:4;white-space:pre;overflow:auto}
+input:focus,textarea:focus,select:focus,.search:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(124,156,255,.18)}
+label{display:block;margin:14px 0;font-size:13px;font-weight:700;color:#d6dbe6}
+.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.tabs{display:flex;gap:6px;margin:16px 0 4px;padding:4px;background:var(--panel2);border:1px solid var(--line);border-radius:13px;width:fit-content}
+.tab{border-color:transparent;background:transparent}.tab.active{background:var(--panel3);color:var(--accent);border-color:var(--line2)}
+.hidden{display:none!important}
+.small{font-size:12px}.empty{color:var(--muted)}
+
+/* ---------- Cards ---------- */
+.card{background:linear-gradient(180deg,var(--panel),#0f1218);border:1px solid var(--line);border-radius:18px;padding:20px;cursor:pointer;
+  transition:border-color .15s,transform .15s,box-shadow .15s}
+.card:hover{border-color:rgba(124,156,255,.6);transform:translateY(-3px);box-shadow:0 12px 30px rgba(0,0,0,.35)}
+@media(hover:none){.card:hover{transform:none;box-shadow:none}}
+.card .icon{font-size:30px}.card .title{font-size:20px;font-weight:800;margin-top:10px;line-height:1.25}
+.card .meta{color:var(--accent);font-size:12px;font-weight:800;margin-top:12px}
+.card .muted{margin:8px 0 0;font-size:14px}
+.status{margin:0 0 22px;padding:11px 15px;background:var(--panel);border:1px solid var(--line);border-radius:11px;color:var(--muted);font-size:14px}
+.status:empty{display:none}
+.status.ok{color:var(--ok)}.status.bad{color:#ffadad}
+
+/* ---------- Modals ---------- */
+.modal{position:fixed;inset:0;background:rgba(3,5,9,.72);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);display:grid;place-items:center;padding:16px;z-index:30}
+.panel{width:min(1000px,100%);max-height:calc(100dvh - 32px);overflow:auto;overscroll-behavior:contain;background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:0 24px 28px;box-shadow:var(--shadow)}
+.panel.narrow{max-width:500px}
+.panel-head{position:sticky;top:0;z-index:3;background:linear-gradient(var(--panel) 85%,rgba(17,20,27,0));padding:20px 0 14px;margin-bottom:4px;display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.panel-head .actions{flex-shrink:0}
+.section{margin-top:26px}
+.section > p{margin:0}
+pre{margin:0;background:var(--code);border:1px solid var(--line);padding:16px;border-radius:12px;overflow:auto;white-space:pre-wrap;word-break:break-word;font:13px/1.6 var(--mono);tab-size:4;color:#dfe5f1}
+
+/* ---------- Programs (detail view) ---------- */
+.program{background:var(--panel2);border:1px solid var(--line);border-radius:16px;padding:16px;margin-top:14px}
+.program-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px}
+.program-head h3{margin:2px 0 0}
+.badge{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:900;letter-spacing:1.5px;color:var(--accent);background:rgba(124,156,255,.1);border:1px solid rgba(124,156,255,.25);padding:4px 9px;border-radius:999px}
+.outs-title{margin:16px 0 0;font-size:11px;font-weight:900;letter-spacing:2px;color:var(--muted)}
+.shots{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(260px,100%),1fr));gap:12px;margin-top:10px}
+.shot{margin:0;background:var(--panel3);border:1px solid var(--line);border-radius:12px;padding:8px;display:flex;flex-direction:column;min-width:0}
+.shot img{width:100%;display:block;border-radius:8px;background:#fff}
+.shot a{display:block}
+.shot pre{font-size:12px;padding:12px;max-height:340px}
+.shot figcaption{font-size:12.5px;color:var(--muted);padding:8px 4px 2px}
+.shot figcaption b{color:var(--accent);font-weight:800}
+.shot.wide{grid-column:1/-1}
+
+/* ---------- Program editor ---------- */
+.prog{background:var(--panel2);border:1px solid var(--line);border-radius:16px;padding:14px 16px 16px;margin-top:14px}
+.prog-head{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.prog-tools{display:flex;gap:6px}
+.prog label{margin:10px 0}
+.out-edit{background:var(--panel3);border:1px solid var(--line);border-radius:12px;padding:8px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.out-edit img{width:100%;max-height:220px;object-fit:contain;border-radius:8px;background:#fff;display:block}
+.out-edit textarea{margin:0;font-size:12.5px}
+.out-edit input{margin:0;padding:8px 10px;font-size:14px}
+.out-edit .out-tools{display:flex;justify-content:space-between;align-items:center;gap:6px}
+.out-edit .tag{font-size:11px;font-weight:900;letter-spacing:1px;color:var(--accent)}
+.out-edit.pending{border-style:dashed;border-color:rgba(124,156,255,.5)}
+.filebtn{margin:0;display:inline-flex}
+.filebtn input{display:none}
+.add-prog{width:100%;margin-top:14px;min-height:48px;border-style:dashed;background:transparent}
+.savebar{position:sticky;bottom:-28px;margin:20px -24px -28px;padding:14px 24px calc(14px + env(safe-area-inset-bottom));background:var(--panel);border-top:1px solid var(--line);display:flex;gap:10px;align-items:center;flex-wrap:wrap;z-index:3}
+.savebar .status{margin:0;padding:8px 12px;flex:1;min-width:160px}
+.subjectrow{display:grid;grid-template-columns:1fr 70px auto;gap:8px;margin:8px 0;align-items:center}
+.subjectrow input{margin:0}
+
+/* ---------- Lock screen ---------- */
+.site-lock{position:fixed;inset:0;z-index:100;display:grid;place-items:center;padding:20px;
+  background:radial-gradient(circle at 70% 10%,rgba(124,156,255,.16),transparent 45%),rgba(6,8,13,.99)}
+.lock-card{width:min(440px,100%);padding:30px;background:var(--panel);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow)}
+.lock-icon{font-size:40px;margin-bottom:12px}
+.lock-card h2{margin:8px 0}
 .lock-actions{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap}
+.lock-actions .btn{flex:1}
+.lock-card .status{margin:16px 0 0}
+
+/* ---------- Phones ---------- */
+@media(max-width:640px){
+  .modal{padding:0;place-items:stretch}
+  .panel{max-height:100dvh;height:100dvh;border-radius:0;border:0;padding:0 16px 24px}
+  .panel.narrow{height:auto;max-height:100dvh;align-self:end;border-radius:22px 22px 0 0;border-top:1px solid var(--line);padding-bottom:calc(24px + env(safe-area-inset-bottom))}
+  .panel-head{padding-top:calc(14px + env(safe-area-inset-top))}
+  .savebar{bottom:-24px;margin:20px -16px -24px;padding-left:16px;padding-right:16px}
+  .formgrid{grid-template-columns:1fr;gap:0}
+  .program,.prog{padding:12px;border-radius:14px}
+  pre{padding:12px;font-size:12.5px}
+  .tabs{width:100%}.tab{flex:1}
+  .lock-card{padding:24px}
+}
 </style>
 </head>
 <body>
@@ -41,7 +147,7 @@ input,textarea,select{width:100%;margin-top:6px;padding:11px;border-radius:10px;
 <div id="siteLock" class="site-lock" style="display:grid;">
   <div class="lock-card">
     <div class="lock-icon">🔒</div>
-    <div class="label">PRIVATE LABORATORY</div>
+    <div class="label">Private laboratory</div>
     <h2>Lab Hub Locked</h2>
     <p class="muted">Sign in to access the laboratory website.</p>
     <label>Email<input id="lockEmail" type="email" autocomplete="email"></label>
@@ -64,7 +170,7 @@ input,textarea,select{width:100%;margin-top:6px;padding:11px;border-radius:10px;
   </div>
 </nav>
 <div class="hero">
-  <div class="eyebrow">ENGINEERING LABORATORY</div>
+  <div class="eyebrow">Engineering laboratory</div>
   <h1>Aaditya's<br><span>Lab Hub</span></h1>
   <p class="muted">Your experiments, code, screenshots and results — saved online.</p>
   <input id="search" class="search" placeholder="Search subjects or experiments..." type="search">
@@ -74,12 +180,12 @@ input,textarea,select{width:100%;margin-top:6px;padding:11px;border-radius:10px;
 <main>
 <div id="status" class="status">Connecting to online database…</div>
 <section id="subjectsView">
-  <div class="label">SUBJECTS</div>
+  <div class="label">Subjects</div>
   <div id="subjects" class="grid"></div>
 </section>
 <section id="experimentsView" class="hidden">
   <div class="row">
-    <div><div class="label">EXPERIMENTS</div><h2 id="subjectName"></h2></div>
+    <div><div class="label">Experiments</div><h2 id="subjectName"></h2></div>
     <button id="backBtn" class="btn">← Subjects</button>
   </div>
   <div id="experiments" class="grid"></div>
@@ -88,27 +194,41 @@ input,textarea,select{width:100%;margin-top:6px;padding:11px;border-radius:10px;
 
 <!-- Auth -->
 <div id="authModal" class="modal hidden">
-  <div class="panel" style="max-width:520px">
-    <div class="row"><h2>Lab Hub Login</h2><button id="closeAuth" class="btn">×</button></div>
-    <p class="muted">Anyone can view the lab. Sign in to edit it.</p>
+  <div class="panel narrow">
+    <div class="panel-head"><h2>Lab Hub Login</h2><button id="closeAuth" class="btn icon">✕</button></div>
+    <p class="muted">Sign in to edit your lab.</p>
     <label>Email<input id="email" type="email" autocomplete="email"></label>
     <label>Password<input id="password" type="password" autocomplete="current-password"></label>
     <div class="actions">
       <button id="signIn" class="btn primary">Sign in</button>
       <button id="signUp" class="btn">Create account</button>
     </div>
-    <div id="authStatus" class="status"></div>
+    <div id="authStatus" class="status" style="margin-top:16px"></div>
+  </div>
+</div>
+
+<!-- PDF details -->
+<div id="pdfModal" class="modal hidden" style="z-index:40">
+  <div class="panel narrow">
+    <div class="panel-head"><div><div class="label">Export</div><h2>Generate PDF</h2></div><button id="closePdf" class="btn icon">✕</button></div>
+    <p class="muted" id="pdfSummary"></p>
+    <label>Name<input id="pdfName" autocomplete="name"></label>
+    <label>Roll number<input id="pdfRoll"></label>
+    <div class="actions"><button id="pdfGo" class="btn primary">📄 Download PDF</button></div>
+    <div id="pdfStatus" class="status" style="margin-top:16px"></div>
   </div>
 </div>
 
 <!-- Detail -->
 <div id="detailModal" class="modal hidden">
   <div class="panel">
-    <div class="row"><div><div id="detailSubject" class="label"></div><h2 id="detailTitle"></h2></div><div class="actions"><button id="generatePdf" class="btn primary">📄 Generate PDF</button><button id="closeDetail" class="btn">×</button></div></div>
+    <div class="panel-head">
+      <div><div id="detailSubject" class="label"></div><h2 id="detailTitle"></h2></div>
+      <div class="actions"><button id="generatePdf" class="btn primary">📄 PDF</button><button id="closeDetail" class="btn icon">✕</button></div>
+    </div>
     <div class="section"><h3>Aim</h3><p id="detailAim" class="muted"></p></div>
-    <div class="section"><h3>Theory</h3><p id="detailTheory" class="muted"></p></div>
-    <div class="section"><div class="codehead"><h3>Code</h3><button id="copyCode" class="btn primary">Copy Code</button></div><pre id="detailCode"></pre></div>
-    <div class="section"><h3>Output / Screenshots</h3><div id="detailShots" class="shots"></div></div>
+    <div class="section"><h3>Theory</h3><p id="detailTheory" class="muted" style="white-space:pre-wrap"></p></div>
+    <div class="section"><h3>Code &amp; Outputs</h3><div id="detailPrograms"></div></div>
     <div class="section"><h3>Result</h3><p id="detailResult" class="muted"></p></div>
   </div>
 </div>
@@ -116,7 +236,10 @@ input,textarea,select{width:100%;margin-top:6px;padding:11px;border-radius:10px;
 <!-- Editor -->
 <div id="editorModal" class="modal hidden">
   <div class="panel">
-    <div class="row"><div><div class="label">ONLINE EDITOR</div><h2>Edit Lab</h2><p class="muted">Changes save directly to the online database.</p></div><button id="closeEditor" class="btn">×</button></div>
+    <div class="panel-head">
+      <div><div class="label">Online editor</div><h2>Edit Lab</h2></div>
+      <button id="closeEditor" class="btn icon">✕</button>
+    </div>
 
     <div class="tabs">
       <button id="expTab" class="btn tab active">Experiments</button>
@@ -131,18 +254,27 @@ input,textarea,select{width:100%;margin-top:6px;padding:11px;border-radius:10px;
       <label>Experiment name<input id="editName"></label>
       <label>Aim<textarea id="editAim" rows="3"></textarea></label>
       <label>Theory<textarea id="editTheory" rows="5"></textarea></label>
-      <label>Code<textarea id="editCode" rows="12"></textarea></label>
-      <label>Result<textarea id="editResult" rows="3"></textarea></label>
-      <label>Upload screenshots<input id="editFiles" type="file" accept="image/*" multiple></label>
-      <div id="editShots" class="shots"></div>
-      <div class="actions"><button id="saveExperiment" class="btn primary">Save Online</button><button id="resetExperiment" class="btn">Reset</button></div>
-      <div id="saveStatus" class="status"></div>
+
+      <div class="section" style="margin-top:18px">
+        <div class="label">Code &amp; outputs</div>
+        <p class="muted small" style="margin:4px 0 0">Add each program separately, with its own screenshots or text outputs. They print in this order.</p>
+        <div id="progEditor"></div>
+        <button id="addProgram" class="btn add-prog">＋ Add another code</button>
+      </div>
+
+      <label style="margin-top:22px">Result<textarea id="editResult" rows="3"></textarea></label>
+
+      <div class="savebar">
+        <button id="saveExperiment" class="btn primary">Save Online</button>
+        <button id="resetExperiment" class="btn">Discard changes</button>
+        <div id="saveStatus" class="status"></div>
+      </div>
     </div>
 
     <div id="subPane" class="hidden">
       <div id="subjectRows"></div>
-      <div class="actions"><button id="addSubject" class="btn primary">＋ Add Subject</button><button id="saveSubjects" class="btn">Save Subjects Online</button></div>
-      <div id="subStatus" class="status"></div>
+      <div class="actions" style="margin-top:12px"><button id="addSubject" class="btn primary">＋ Add Subject</button><button id="saveSubjects" class="btn">Save Subjects Online</button></div>
+      <div id="subStatus" class="status" style="margin-top:14px"></div>
     </div>
   </div>
 </div>
@@ -151,18 +283,80 @@ input,textarea,select{width:100%;margin-top:6px;padding:11px;border-radius:10px;
 const SUPABASE_URL = "https://mosllsrduvscosldetiy.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_6FmY5RVASWUiCYZ0X-czxQ_QRTcWajC";
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+const BUCKET = "lab-screenshots";
+const PROGRAMS_TAG = "labhub-programs-v1";
+const PLACEHOLDER_CODE = "// Paste your code here";
 
 let lab = null;
 let subjects = [];
 let experiments = [];
 let currentSubject = null;
 let currentExperiment = null;
+let draft = null;      // editor state: {programs:[...], removed:[paths]}
+let dirty = false;
 
 const $ = id => document.getElementById(id);
 const esc = value => String(value ?? "")
   .replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
   .replaceAll('"',"&quot;");
+const isUrl = p => /^https?:\/\//i.test(p);
+const pad2 = n => String(n).padStart(2,"0");
 
+/* ---------- Programs: each code block with its own outputs ----------
+   Stored in the experiments.code column as JSON:
+   {"format":"labhub-programs-v1","programs":[{title,code,outputs:[{type:"image",path,caption}|{type:"text",text,caption}]}]}
+   Old experiments (plain code + screenshots) still load as a single program. */
+function getPrograms(exp){
+  if(!exp) return [];
+  const raw = exp.code || "";
+  if(raw.trimStart().startsWith("{")){
+    try{
+      const j = JSON.parse(raw);
+      if(j && j.format === PROGRAMS_TAG && Array.isArray(j.programs)){
+        return j.programs.map(p => ({
+          title: p.title || "",
+          code: p.code || "",
+          outputs: (p.outputs || []).filter(o => o && (o.type === "text" ? true : o.path))
+        }));
+      }
+    }catch(e){}
+  }
+  return [{
+    title:"",
+    code: raw === PLACEHOLDER_CODE ? "" : raw,
+    outputs:(exp.screenshots || []).map(path => ({type:"image",path,caption:""}))
+  }];
+}
+function serializePrograms(programs){
+  const clean = programs.map(p => ({
+    title:(p.title||"").trim(),
+    code:p.code||"",
+    outputs:p.outputs.map(o => o.type === "text"
+      ? {type:"text",text:o.text||"",caption:(o.caption||"").trim()}
+      : {type:"image",path:o.path,caption:(o.caption||"").trim()})
+  }));
+  const paths = clean.flatMap(p => p.outputs.filter(o => o.type === "image").map(o => o.path));
+  // A single untitled program with plain screenshots stays in the old format (fully backward compatible)
+  const simple = clean.length === 1 && !clean[0].title &&
+    clean[0].outputs.every(o => o.type === "image" && !o.caption);
+  const code = simple ? clean[0].code : JSON.stringify({format:PROGRAMS_TAG,programs:clean});
+  return {code, screenshots:paths};
+}
+const hasContent = p => (p.code||"").trim() || p.outputs.length;
+
+/* ---------- Signed URLs (cached) ---------- */
+const urlCache = new Map();
+async function signedUrl(path){
+  if(isUrl(path)) return path;
+  const c = urlCache.get(path);
+  if(c && c.exp > Date.now()) return c.url;
+  const {data,error} = await sb.storage.from(BUCKET).createSignedUrl(path,3600);
+  if(error || !data?.signedUrl) return null;
+  urlCache.set(path,{url:data.signedUrl,exp:Date.now()+50*60*1000});
+  return data.signedUrl;
+}
+
+/* ---------- Session / loading ---------- */
 async function refreshSession(){
   const {data:{session}} = await sb.auth.getSession();
   if(session){
@@ -206,9 +400,13 @@ async function loadLab(){
       experiments=e||[];
     }
 
-    $("status").textContent="Private lab connected ✓";
+    $("status").textContent="";
     $("status").className="status ok";
     renderSubjects($("search").value);
+    if(currentSubject && !$("experimentsView").classList.contains("hidden")){
+      const s2 = subjects.find(x => x.id === currentSubject.id);
+      if(s2) openSubject(s2.id, true);
+    }
     unlockSite();
   }catch(err){
     console.error(err);
@@ -219,20 +417,16 @@ async function loadLab(){
 }
 
 function lockSite(){
-  const app=$("privateApp");
-  const lock=$("siteLock");
+  const app=$("privateApp"), lock=$("siteLock");
   if(app) app.style.display="none";
   if(lock) lock.style.display="grid";
-  const edit=$("editBtn");
-  const auth=$("authBtn");
-  if(edit) edit.classList.add("hidden");
-  if(auth) auth.textContent="🔐 Sign in";
+  $("editBtn")?.classList.add("hidden");
+  if($("authBtn")) $("authBtn").textContent="🔐 Sign in";
+  $("lockStatus").textContent="";
 }
 function unlockSite(){
-  const lock=$("siteLock");
-  const app=$("privateApp");
-  if(lock) lock.style.display="none";
-  if(app) app.style.display="block";
+  $("siteLock").style.display="none";
+  $("privateApp").style.display="block";
 }
 async function lockedSignIn(){
   $("lockStatus").textContent="Signing in…";
@@ -255,6 +449,7 @@ async function lockedSignUp(){
   $("lockStatus").textContent="Account created. Check your email if confirmation is required.";
 }
 
+/* ---------- Views ---------- */
 function renderSubjects(query=""){
   const q = query.toLowerCase().trim();
   const list = subjects.filter(s =>
@@ -262,21 +457,23 @@ function renderSubjects(query=""){
     experiments.some(e => e.subject_id === s.id && e.name.toLowerCase().includes(q))
   );
 
-  $("subjects").innerHTML = list.map(s => `
+  $("subjects").innerHTML = list.map(s => {
+    const count = experiments.filter(e => e.subject_id === s.id).length;
+    return `
     <article class="card" data-id="${s.id}">
       <div class="icon">${esc(s.icon)}</div>
       <div class="title">${esc(s.name)}</div>
-      <p class="muted">15 experiments with code, screenshots and results.</p>
-      <div class="meta">01 — 15 experiments →</div>
-    </article>
-  `).join("") || '<p class="empty">No subjects found.</p>';
+      <p class="muted">${count} experiment${count===1?"":"s"} with code, outputs and results.</p>
+      <div class="meta">Open →</div>
+    </article>`;
+  }).join("") || '<p class="empty">No subjects found.</p>';
 
   document.querySelectorAll("#subjects .card").forEach(card => {
     card.onclick = () => openSubject(card.dataset.id);
   });
 }
 
-function openSubject(id){
+function openSubject(id, keepScroll=false){
   currentSubject = subjects.find(s => s.id === id);
   if(!currentSubject) return;
 
@@ -285,13 +482,15 @@ function openSubject(id){
     .sort((a,b) => a.experiment_number - b.experiment_number);
 
   $("subjectName").textContent = currentSubject.name;
-  $("experiments").innerHTML = list.map(e => `
+  $("experiments").innerHTML = list.map(e => {
+    const n = getPrograms(e).filter(hasContent).length;
+    return `
     <article class="card" data-id="${e.id}">
-      <div class="label">EXPERIMENT ${String(e.experiment_number).padStart(2,"0")}</div>
+      <div class="label">Experiment ${pad2(e.experiment_number)}</div>
       <div class="title">${esc(e.name)}</div>
-      <p class="muted">Open details, code and screenshots.</p>
-    </article>
-  `).join("");
+      <p class="muted">${n ? `${n} code${n===1?"":"s"} with outputs` : "Open details, code and outputs."}</p>
+    </article>`;
+  }).join("");
 
   document.querySelectorAll("#experiments .card").forEach(card => {
     card.onclick = () => openDetail(card.dataset.id);
@@ -299,38 +498,72 @@ function openSubject(id){
 
   $("subjectsView").classList.add("hidden");
   $("experimentsView").classList.remove("hidden");
-  scrollTo(0,0);
+  if(!keepScroll) scrollTo(0,0);
 }
 
 async function openDetail(id){
   currentExperiment = experiments.find(e => e.id === id);
   if(!currentExperiment) return;
 
-  $("detailSubject").textContent = currentSubject.name;
+  $("detailSubject").textContent = currentSubject.name + " · Experiment " + pad2(currentExperiment.experiment_number);
   $("detailTitle").textContent = currentExperiment.name;
   $("detailAim").textContent = currentExperiment.aim;
   $("detailTheory").textContent = currentExperiment.theory;
-  $("detailCode").textContent = currentExperiment.code;
   $("detailResult").textContent = currentExperiment.result;
-
-  await renderPrivateScreenshots($("detailShots"), currentExperiment.screenshots || []);
   $("detailModal").classList.remove("hidden");
+  $("detailModal").querySelector(".panel").scrollTop = 0;
+  await renderDetailPrograms();
 }
 
-async function renderPrivateScreenshots(container, paths){
-  if(!paths.length){
-    container.innerHTML='<div class="shot"><span class="muted">No screenshots added.</span></div>';
+async function renderDetailPrograms(){
+  const box = $("detailPrograms");
+  const programs = getPrograms(currentExperiment).filter(hasContent);
+  if(!programs.length){
+    box.innerHTML = '<p class="muted">No code added yet.</p>';
     return;
   }
-  container.innerHTML='<div class="shot"><span class="muted">Loading screenshots…</span></div>';
-  const urls=[];
-  for(const path of paths){
-    if(/^https?:\/\//i.test(path)){ urls.push(path); continue; }
-    const {data,error}=await sb.storage.from("lab-screenshots").createSignedUrl(path,3600);
-    if(!error && data?.signedUrl) urls.push(data.signedUrl);
-  }
-  container.innerHTML=urls.map(url=>`<div class="shot"><img src="${esc(url)}" alt="Output screenshot"></div>`).join("") ||
-    '<div class="shot"><span class="muted">No screenshots available.</span></div>';
+  box.innerHTML = programs.map((p,i) => `
+    <div class="program">
+      <div class="program-head">
+        <div><span class="badge">CODE ${i+1}</span>${p.title ? `<h3>${esc(p.title)}</h3>` : ""}</div>
+        ${p.code.trim() ? `<button class="btn sm" data-copy="${i}">Copy</button>` : ""}
+      </div>
+      ${p.code.trim() ? `<pre>${esc(p.code)}</pre>` : ""}
+      ${p.outputs.length ? `<div class="outs-title">OUTPUT${p.outputs.length>1?"S":""}</div>
+      <div class="shots">${p.outputs.map((o,j) => {
+        const cap = `<figcaption><b>Output ${i+1}.${j+1}</b>${o.caption ? " — "+esc(o.caption) : ""}</figcaption>`;
+        return o.type === "text"
+          ? `<figure class="shot wide"><pre>${esc(o.text)}</pre>${cap}</figure>`
+          : `<figure class="shot"><a target="_blank" rel="noopener" data-img="${esc(o.path)}"><img alt="Output ${i+1}.${j+1}" loading="lazy"></a>${cap}</figure>`;
+      }).join("")}</div>` : ""}
+    </div>`).join("");
+
+  box.querySelectorAll("[data-copy]").forEach(btn => {
+    btn.onclick = async () => {
+      await navigator.clipboard.writeText(programs[Number(btn.dataset.copy)].code);
+      btn.textContent = "Copied ✓";
+      setTimeout(() => btn.textContent = "Copy", 1200);
+    };
+  });
+  await Promise.all([...box.querySelectorAll("[data-img]")].map(async a => {
+    const url = await signedUrl(a.dataset.img);
+    if(url){ a.href = url; a.querySelector("img").src = url; }
+    else a.closest(".shot").querySelector("figcaption").insertAdjacentHTML("beforeend"," <span class='small'>(image unavailable)</span>");
+  }));
+}
+
+/* ---------- Lab creation ---------- */
+function blankExperiments(subjectId){
+  return Array.from({length:15},(_,n)=>({
+    subject_id:subjectId,
+    experiment_number:n+1,
+    name:`Experiment ${pad2(n+1)}`,
+    aim:"Add the aim here.",
+    theory:"Add theory here.",
+    code:PLACEHOLDER_CODE,
+    result:"Add the result here.",
+    screenshots:[]
+  }));
 }
 
 async function createLabForUser(user){
@@ -345,36 +578,21 @@ async function createLabForUser(user){
   if(error) throw error;
 
   const seeds = [
-    ["vlsi","VLSI","🔌"],
-    ["arm","ARM","⚙️"],
-    ["os","OS","💿"],
-    ["coa","COA","💻"],
-    ["instrumentation","Instrumentation","🤖"]
+    ["VLSI","🔌"],["ARM","⚙️"],["OS","💿"],["COA","💻"],["Instrumentation","🤖"]
   ];
-
   for(let i=0;i<seeds.length;i++){
-    const [id,name,icon] = seeds[i];
+    const [name,icon] = seeds[i];
     const {data:subject,error:subjectError} = await sb.from("subjects").insert({
       lab_id:newLab.id,name,icon,position:i
     }).select().single();
     if(subjectError) throw subjectError;
-
-    const rows = Array.from({length:15},(_,n)=>({
-      subject_id:subject.id,
-      experiment_number:n+1,
-      name:`Experiment ${String(n+1).padStart(2,"0")}`,
-      aim:"Add the aim here.",
-      theory:"Add theory here.",
-      code:"// Paste your code here",
-      result:"Add the result here.",
-      screenshots:[]
-    }));
-    const {error:expError} = await sb.from("experiments").insert(rows);
+    const {error:expError} = await sb.from("experiments").insert(blankExperiments(subject.id));
     if(expError) throw expError;
   }
   return newLab;
 }
 
+/* ---------- Editor ---------- */
 async function openEditor(){
   const {data:{user}} = await sb.auth.getUser();
   if(!user){
@@ -403,16 +621,26 @@ function populateEditor(){
 function populateExperimentSelect(){
   const s = subjects.find(x => x.id === $("editSubject").value);
   if(!s) return;
-
   const list = experiments
     .filter(e => e.subject_id === s.id)
     .sort((a,b) => a.experiment_number - b.experiment_number);
-
   $("editExperiment").innerHTML = list.map(e =>
-    `<option value="${e.id}">${String(e.experiment_number).padStart(2,"0")} — ${esc(e.name)}</option>`
+    `<option value="${e.id}">${pad2(e.experiment_number)} — ${esc(e.name)}</option>`
   ).join("");
-
+  if(currentExperiment && list.some(e => e.id === currentExperiment.id)) $("editExperiment").value = currentExperiment.id;
   loadEditorFields();
+}
+
+function confirmDiscard(){
+  return !dirty || confirm("You have unsaved changes. Discard them?");
+}
+function setDirty(v){
+  dirty = v;
+  if(v){ $("saveStatus").textContent = "Unsaved changes"; $("saveStatus").className = "status"; }
+}
+
+function releasePreviews(){
+  draft?.programs.forEach(p => p.outputs.forEach(o => o.preview && URL.revokeObjectURL(o.preview)));
 }
 
 function loadEditorFields(){
@@ -423,98 +651,193 @@ function loadEditorFields(){
   $("editName").value = currentExperiment.name;
   $("editAim").value = currentExperiment.aim;
   $("editTheory").value = currentExperiment.theory;
-  $("editCode").value = currentExperiment.code;
   $("editResult").value = currentExperiment.result;
-  renderEditorShots();
+
+  releasePreviews();
+  const programs = getPrograms(currentExperiment).map(p => ({...p, outputs:p.outputs.map(o => ({...o}))}));
+  draft = {programs: programs.length ? programs : [{title:"",code:"",outputs:[]}], removed:[]};
+  dirty = false;
+  $("saveStatus").textContent = "";
+  renderProgramEditor();
 }
 
-async function renderEditorShots(){
-  const box=$("editShots");box.innerHTML="";
-  const paths=currentExperiment?.screenshots||[];
-  if(!paths.length){box.innerHTML='<div class="shot"><span class="muted">No screenshots saved.</span></div>';return;}
-  for(let i=0;i<paths.length;i++){
-    let url=paths[i];
-    if(!/^https?:\/\//i.test(paths[i])){
-      const {data,error}=await sb.storage.from("lab-screenshots").createSignedUrl(paths[i],3600);
-      if(error || !data?.signedUrl) continue;
-      url=data.signedUrl;
+function renderProgramEditor(){
+  const box = $("progEditor");
+  const total = draft.programs.length;
+  box.innerHTML = draft.programs.map((p,i) => `
+    <div class="prog" data-i="${i}">
+      <div class="prog-head">
+        <span class="badge">CODE ${i+1}</span>
+        <div class="prog-tools">
+          <button class="btn sm icon" data-act="up" title="Move up" ${i===0?"disabled":""}>↑</button>
+          <button class="btn sm icon" data-act="down" title="Move down" ${i===total-1?"disabled":""}>↓</button>
+          <button class="btn sm danger" data-act="del">Delete</button>
+        </div>
+      </div>
+      <label>Title <span class="muted small">(optional)</span><input data-f="title" value="${esc(p.title)}" placeholder="e.g. Half adder using NAND gates"></label>
+      <label>Code<textarea class="code" data-f="code" rows="10" spellcheck="false" autocapitalize="off" autocomplete="off">${esc(p.code)}</textarea></label>
+      <div class="outs-title">OUTPUTS FOR CODE ${i+1}</div>
+      <div class="shots">
+        ${p.outputs.map((o,j) => `
+          <div class="out-edit ${o.file?"pending":""}" data-j="${j}">
+            <div class="out-tools">
+              <span class="tag">OUTPUT ${i+1}.${j+1}${o.file?" · NEW":""}</span>
+              <span class="prog-tools">
+                <button class="btn sm icon" data-act="oup" title="Move earlier" ${j===0?"disabled":""}>←</button>
+                <button class="btn sm icon" data-act="odown" title="Move later" ${j===p.outputs.length-1?"disabled":""}>→</button>
+                <button class="btn sm icon danger" data-act="odel" title="Remove">✕</button>
+              </span>
+            </div>
+            ${o.type === "text"
+              ? `<textarea class="code" data-of="text" rows="6" spellcheck="false" placeholder="Paste terminal / console output">${esc(o.text)}</textarea>`
+              : `<img data-src="${esc(o.path||"")}" ${o.preview?`src="${o.preview}"`:""} alt="">`}
+            <input data-of="caption" value="${esc(o.caption)}" placeholder="Caption (optional)">
+          </div>`).join("")}
+      </div>
+      <div class="actions" style="margin-top:12px">
+        <label class="btn sm filebtn">📷 Add screenshots<input type="file" accept="image/*" multiple data-act="files"></label>
+        <button class="btn sm" data-act="addtext">⌨️ Add text output</button>
+      </div>
+    </div>`).join("");
+
+  box.querySelectorAll("img[data-src]").forEach(async img => {
+    if(img.getAttribute("src") || !img.dataset.src) return;
+    const url = await signedUrl(img.dataset.src);
+    if(url) img.src = url;
+  });
+}
+
+function progEditorEvents(){
+  const box = $("progEditor");
+  const locate = el => {
+    const prog = el.closest(".prog"); if(!prog) return {};
+    const p = draft.programs[Number(prog.dataset.i)];
+    const out = el.closest(".out-edit");
+    return {p, i:Number(prog.dataset.i), j: out ? Number(out.dataset.j) : -1};
+  };
+  box.addEventListener("input", e => {
+    const {p,j} = locate(e.target); if(!p) return;
+    if(e.target.dataset.f){ p[e.target.dataset.f] = e.target.value; setDirty(true); }
+    if(e.target.dataset.of && j >= 0){ p.outputs[j][e.target.dataset.of] = e.target.value; setDirty(true); }
+  });
+  box.addEventListener("change", e => {
+    if(e.target.dataset.act !== "files") return;
+    const {p} = locate(e.target); if(!p) return;
+    for(const file of e.target.files){
+      p.outputs.push({type:"image",file,preview:URL.createObjectURL(file),caption:""});
     }
-    const d=document.createElement("div");
-    d.className="shot";
-    d.innerHTML=`<img src="${esc(url)}" alt="Saved screenshot"><button class="btn" data-shot="${i}" style="margin-top:8px">Remove</button>`;
-    box.appendChild(d);
-  }
-  document.querySelectorAll("[data-shot]").forEach(btn=>{
-    btn.onclick=async()=>{
-      const i=Number(btn.dataset.shot),path=currentExperiment.screenshots[i];
-      currentExperiment.screenshots.splice(i,1);
-      if(!/^https?:\/\//i.test(path)) await sb.storage.from("lab-screenshots").remove([path]);
-      const {data,error}=await sb.from("experiments").update({
-        screenshots:currentExperiment.screenshots,
-        updated_at:new Date().toISOString()
-      }).eq("id",currentExperiment.id).select().single();
-      if(!error) Object.assign(currentExperiment,data);
-      renderEditorShots();
-    };
+    setDirty(true);
+    renderProgramEditor();
+  });
+  box.addEventListener("click", e => {
+    const btn = e.target.closest("button[data-act]"); if(!btn) return;
+    const {p,i,j} = locate(btn); if(!p) return;
+    const P = draft.programs, act = btn.dataset.act;
+    const swap = (arr,a,b) => { [arr[a],arr[b]] = [arr[b],arr[a]]; };
+    if(act === "up" && i > 0) swap(P,i,i-1);
+    else if(act === "down" && i < P.length-1) swap(P,i,i+1);
+    else if(act === "del"){
+      if(hasContent(p) && !confirm(`Delete Code ${i+1} and its ${p.outputs.length} output(s)?`)) return;
+      p.outputs.forEach(o => { if(o.path) draft.removed.push(o.path); if(o.preview) URL.revokeObjectURL(o.preview); });
+      P.splice(i,1);
+      if(!P.length) P.push({title:"",code:"",outputs:[]});
+    }
+    else if(act === "addtext") p.outputs.push({type:"text",text:"",caption:""});
+    else if(act === "oup" && j > 0) swap(p.outputs,j,j-1);
+    else if(act === "odown" && j < p.outputs.length-1) swap(p.outputs,j,j+1);
+    else if(act === "odel"){
+      const o = p.outputs[j];
+      if(o.path) draft.removed.push(o.path);
+      if(o.preview) URL.revokeObjectURL(o.preview);
+      p.outputs.splice(j,1);
+    }
+    else return;
+    setDirty(true);
+    renderProgramEditor();
   });
 }
 
 async function saveExperiment(){
-  if(!currentExperiment) return;
-  $("saveStatus").textContent = "Saving online…";
-
-  const screenshotUrls = [...(currentExperiment.screenshots || [])];
+  if(!currentExperiment || !draft) return;
+  const btn = $("saveExperiment");
+  const st = $("saveStatus");
   const {data:{user}} = await sb.auth.getUser();
-  if(!user){$("saveStatus").textContent="Please sign in again.";return}
+  if(!user){st.textContent="Please sign in again.";return}
 
-  for(const file of [...$("editFiles").files]){
-    const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g,"_");
-    const path = `${user.id}/${currentExperiment.id}/${crypto.randomUUID()}-${safeName}`;
-    const upload = await sb.storage.from("lab-screenshots").upload(path,file,{upsert:false});
-    if(upload.error){
-      $("saveStatus").textContent = "Screenshot upload failed: " + upload.error.message;
-      return;
+  btn.disabled = true;
+  try{
+    // Upload new screenshots
+    const pending = draft.programs.flatMap(p => p.outputs.filter(o => o.file));
+    let done = 0;
+    for(const o of pending){
+      st.textContent = `Uploading screenshot ${++done} of ${pending.length}…`; st.className = "status";
+      const safeName = o.file.name.replace(/[^a-zA-Z0-9._-]/g,"_");
+      const id = crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2);
+      const path = `${user.id}/${currentExperiment.id}/${id}-${safeName}`;
+      const upload = await sb.storage.from(BUCKET).upload(path,o.file,{upsert:false});
+      if(upload.error){ st.textContent = "Screenshot upload failed: " + upload.error.message; st.className="status bad"; return; }
+      o.path = path;
+      URL.revokeObjectURL(o.preview); delete o.preview; delete o.file;
     }
-    screenshotUrls.push(path);
+
+    st.textContent = "Saving online…";
+    const programs = draft.programs.filter(p => hasContent(p) || p.title.trim());
+    const {code,screenshots} = serializePrograms(programs.length ? programs : [{title:"",code:"",outputs:[]}]);
+    const update = {
+      name:$("editName").value.trim() || currentExperiment.name,
+      aim:$("editAim").value,
+      theory:$("editTheory").value,
+      code,
+      result:$("editResult").value,
+      screenshots,
+      updated_at:new Date().toISOString()
+    };
+    const {data,error} = await sb.from("experiments").update(update).eq("id",currentExperiment.id).select().single();
+    if(error){ st.textContent = "Save failed: " + error.message; st.className="status bad"; return; }
+
+    // Remove deleted screenshots from storage (only after the save succeeded)
+    const stale = draft.removed.filter(path => !isUrl(path) && !screenshots.includes(path));
+    if(stale.length) await sb.storage.from(BUCKET).remove(stale);
+
+    Object.assign(currentExperiment,data);
+    const keep = $("editExperiment").value;
+    populateExperimentSelect();
+    $("editExperiment").value = keep;
+    loadEditorFields();
+    st.textContent = "Saved online ✓"; st.className = "status ok";
+    renderSubjects($("search").value);
+    if(!$("experimentsView").classList.contains("hidden") && currentSubject) openSubject(currentSubject.id, true);
+  }catch(err){
+    console.error(err);
+    st.textContent = "Save failed: " + err.message; st.className = "status bad";
+  }finally{
+    btn.disabled = false;
   }
-
-  const update = {
-    name:$("editName").value.trim() || currentExperiment.name,
-    aim:$("editAim").value,
-    theory:$("editTheory").value,
-    code:$("editCode").value,
-    result:$("editResult").value,
-    screenshots:screenshotUrls,
-    updated_at:new Date().toISOString()
-  };
-
-  const {data,error} = await sb.from("experiments").update(update).eq("id",currentExperiment.id).select().single();
-  if(error){
-    $("saveStatus").textContent = "Save failed: " + error.message;
-    return;
-  }
-
-  Object.assign(currentExperiment,data);
-  $("editFiles").value = "";
-  $("saveStatus").textContent = "Saved online ✓";
-  renderEditorShots();
-  renderSubjects($("search").value);
 }
 
+function addProgram(){
+  draft.programs.push({title:"",code:"",outputs:[]});
+  setDirty(true);
+  renderProgramEditor();
+  const last = $("progEditor").lastElementChild;
+  last?.scrollIntoView({behavior:"smooth",block:"start"});
+  setTimeout(() => last?.querySelector("textarea")?.focus({preventScroll:true}), 350);
+}
+
+/* ---------- Subjects ---------- */
 function renderSubjectRows(){
   $("subjectRows").innerHTML = subjects.map(s => `
     <div class="subjectrow" data-id="${s.id}">
-      <input class="subjectName" value="${esc(s.name)}">
-      <input class="subjectIcon" value="${esc(s.icon)}">
+      <input class="subjectName" value="${esc(s.name)}" aria-label="Subject name">
+      <input class="subjectIcon" value="${esc(s.icon)}" aria-label="Icon" style="text-align:center">
       <button class="btn danger deleteSubject" data-id="${s.id}">Delete</button>
     </div>
   `).join("");
 
   document.querySelectorAll(".deleteSubject").forEach(btn => {
     btn.onclick = async () => {
-      if(!confirm("Delete this subject and all 15 experiments?")) return;
-      const id = btn.dataset.id;
-      const {error} = await sb.from("subjects").delete().eq("id",id);
+      if(!confirm("Delete this subject and all its experiments?")) return;
+      const {error} = await sb.from("subjects").delete().eq("id",btn.dataset.id);
       if(error){$("subStatus").textContent="Delete failed: "+error.message;return}
       await loadLab();
       populateEditor();
@@ -525,12 +848,11 @@ function renderSubjectRows(){
 
 async function saveSubjects(){
   for(const row of document.querySelectorAll(".subjectrow")){
-    const id = row.dataset.id;
     const name = row.querySelector(".subjectName").value.trim();
     const icon = row.querySelector(".subjectIcon").value.trim() || "📘";
     const {error} = await sb.from("subjects").update({
       name,icon,updated_at:new Date().toISOString()
-    }).eq("id",id);
+    }).eq("id",row.dataset.id);
     if(error){$("subStatus").textContent="Save failed: "+error.message;return}
   }
   await loadLab();
@@ -541,30 +863,12 @@ async function saveSubjects(){
 async function addSubject(){
   if(subjects.length >= 15){alert("Maximum 15 subjects.");return}
   if(!lab){alert("Create the lab first.");return}
-
   const {data:s,error} = await sb.from("subjects").insert({
-    lab_id:lab.id,
-    name:"New Subject",
-    icon:"📘",
-    position:subjects.length
+    lab_id:lab.id, name:"New Subject", icon:"📘", position:subjects.length
   }).select().single();
-
   if(error){$("subStatus").textContent="Add failed: "+error.message;return}
-
-  const rows = Array.from({length:15},(_,n)=>({
-    subject_id:s.id,
-    experiment_number:n+1,
-    name:`Experiment ${String(n+1).padStart(2,"0")}`,
-    aim:"Add the aim here.",
-    theory:"Add theory here.",
-    code:"// Paste your code here",
-    result:"Add the result here.",
-    screenshots:[]
-  }));
-
-  const {error:expError} = await sb.from("experiments").insert(rows);
+  const {error:expError} = await sb.from("experiments").insert(blankExperiments(s.id));
   if(expError){$("subStatus").textContent="Experiment creation failed: "+expError.message;return}
-
   await loadLab();
   populateEditor();
   $("subStatus").textContent="Subject added online ✓";
@@ -591,136 +895,202 @@ async function signUp(){
   $("authStatus").textContent = "Account created. Check your email if confirmation is enabled.";
 }
 
-
+/* ---------- PDF ---------- */
 function pdfDetails(){
   return {
     name:localStorage.getItem("labhub_pdf_name")||"Aaditya Bichu",
     roll:localStorage.getItem("labhub_pdf_roll")||"24EC01"
   };
 }
-async function screenshotBlob(path){
-  let url=path;
-  if(!/^https?:\/\//i.test(path)){
-    const r=await sb.storage.from("lab-screenshots").createSignedUrl(path,3600);
-    if(r.error) throw r.error;
-    url=r.data.signedUrl;
-  }
-  const r=await fetch(url);
+async function screenshotDataURL(path){
+  const url = await signedUrl(path);
+  if(!url) throw new Error("Could not get screenshot link");
+  const r = await fetch(url);
   if(!r.ok) throw new Error("Could not download screenshot");
-  return await r.blob();
-}
-function blobDataURL(blob){
-  return new Promise((resolve,reject)=>{
-    const r=new FileReader();
-    r.onload=()=>resolve(r.result);
-    r.onerror=reject;
-    r.readAsDataURL(blob);
+  const blob = await r.blob();
+  return await new Promise((resolve,reject)=>{
+    const fr=new FileReader();
+    fr.onload=()=>resolve(fr.result);
+    fr.onerror=reject;
+    fr.readAsDataURL(blob);
   });
 }
-async function addImage(doc,data,x,y,maxW,maxH){
+// Normalise any image (PNG, WebP, transparent…) to a white-backed JPEG for jsPDF
+function toJpeg(dataUrl){
   return new Promise(resolve=>{
     const img=new Image();
     img.onload=()=>{
-      const scale=Math.min(maxW/img.naturalWidth,maxH/img.naturalHeight,1);
-      const w=img.naturalWidth*scale,h=img.naturalHeight*scale;
-      doc.addImage(data,"JPEG",x,y,w,h);
-      resolve(h);
+      const s=Math.min(1,2000/img.naturalWidth);
+      const c=document.createElement("canvas");
+      c.width=Math.max(1,Math.round(img.naturalWidth*s));
+      c.height=Math.max(1,Math.round(img.naturalHeight*s));
+      const x=c.getContext("2d");
+      x.fillStyle="#fff";x.fillRect(0,0,c.width,c.height);
+      x.drawImage(img,0,0,c.width,c.height);
+      resolve({data:c.toDataURL("image/jpeg",0.9),w:c.width,h:c.height});
     };
-    img.onerror=()=>resolve(0);
-    img.src=data;
+    img.onerror=()=>resolve(null);
+    img.src=dataUrl;
   });
 }
-async function generateExperimentPdf(){
-  const {jsPDF}=window.jspdf||{};
-  if(!jsPDF){alert("PDF library did not load. Refresh and try again.");return;}
-  if(!currentExperiment)return;
-  const d=pdfDetails(),doc=new jsPDF({unit:"mm",format:"a4"});
-  const W=210,H=297,M=18,C=W-2*M;
-  let y=20;
 
+async function generateExperimentPdf(onProgress=()=>{}){
+  const {jsPDF}=window.jspdf||{};
+  if(!jsPDF) throw new Error("PDF library did not load. Refresh and try again.");
+  if(!currentExperiment) return;
+  const d=pdfDetails(),doc=new jsPDF({unit:"mm",format:"a4"});
+  const W=210,H=297,M=18,C=W-2*M,TOP=20,LIMIT=H-20;
+  let y=TOP;
+
+  const heading=(text,size=13)=>{
+    doc.setFont("helvetica","bold");doc.setFontSize(size);doc.setTextColor(0,0,0);
+    const t=doc.splitTextToSize(text,C);doc.text(t,M,y);y+=t.length*(size*.42)+3;
+  };
+  const newPage=cont=>{doc.addPage();y=TOP;if(cont)heading(cont+" (continued)");};
+  const ensure=(space,cont)=>{if(y+space>LIMIT)newPage(cont);};
+
+  // Monospace block that splits cleanly across pages
+  const block=(text,cont,fill)=>{
+    doc.setFont("courier","normal");doc.setFontSize(8.5);
+    const lines=doc.splitTextToSize(String(text||"").replace(/\t/g,"    "),C-6),lh=4.2;
+    let i=0;
+    while(i<lines.length){
+      if(y>LIMIT-14){newPage(cont);}
+      doc.setFont("courier","normal");doc.setFontSize(8.5);
+      const n=Math.max(1,Math.floor((LIMIT-y-4)/lh)),chunk=lines.slice(i,i+n);
+      doc.setFillColor(...fill);doc.roundedRect(M,y-4,C,chunk.length*lh+5,2,2,"F");
+      doc.setTextColor(25,28,35);doc.text(chunk,M+3,y);doc.setTextColor(0,0,0);
+      y+=chunk.length*lh+7;i+=chunk.length;
+    }
+  };
+
+  // Header (same as before)
   doc.setFont("helvetica","bold");doc.setFontSize(18);
   doc.text("LABORATORY EXPERIMENT",M,y);y+=11;
   doc.setFontSize(13);
-  doc.text("Experiment "+String(currentExperiment.experiment_number).padStart(2,"0"),M,y);y+=8;
+  doc.text("Experiment "+pad2(currentExperiment.experiment_number),M,y);y+=8;
   doc.setFont("helvetica","normal");doc.setFontSize(11);
   doc.text("Name: "+d.name,M,y);y+=7;
   doc.text("Roll Number: "+d.roll,M,y);y+=7;
   doc.text("Subject: "+(currentSubject?.name||""),M,y);y+=10;
-  doc.setFont("helvetica","bold");doc.setFontSize(14);
-  const title=doc.splitTextToSize(currentExperiment.name||"Experiment",C);
-  doc.text(title,M,y);y+=title.length*7+8;
+  heading(currentExperiment.name||"Experiment",14);y+=5;
 
-  doc.text("CODE",M,y);y+=7;
-  doc.setFont("courier","normal");doc.setFontSize(8.5);
-  const lines=doc.splitTextToSize(String(currentExperiment.code||""),C-6),lh=4.2;
-  let i=0;
-  while(i<lines.length){
-    if(y>H-M-18){doc.addPage();y=20;doc.setFont("helvetica","bold");doc.setFontSize(13);doc.text("CODE (continued)",M,y);y+=8;doc.setFont("courier","normal");doc.setFontSize(8.5);}
-    const n=Math.max(1,Math.floor((H-M-y-8)/lh)),chunk=lines.slice(i,i+n);
-    doc.setFillColor(245,246,248);doc.roundedRect(M,y-4,C,chunk.length*lh+7,2,2,"F");
-    doc.setTextColor(25,28,35);doc.text(chunk,M+3,y);doc.setTextColor(0,0,0);
-    y+=chunk.length*lh+10;i+=chunk.length;
-  }
+  const programs=getPrograms(currentExperiment).filter(hasContent);
+  const single=programs.length===1;
+  const totalImgs=programs.reduce((a,p)=>a+p.outputs.filter(o=>o.type!=="text").length,0);
+  let imgDone=0;
 
-  const shots=currentExperiment.screenshots||[];
-  if(shots.length){
-    doc.addPage();y=20;doc.setFont("helvetica","bold");doc.setFontSize(14);doc.text("OUTPUT / SCREENSHOTS",M,y);y+=10;
-    let num=1;
-    for(const path of shots){
-      try{
-        const data=await blobDataURL(await screenshotBlob(path));
-        if(y>H-65){doc.addPage();y=20;doc.setFont("helvetica","bold");doc.setFontSize(14);doc.text("OUTPUT / SCREENSHOTS (continued)",M,y);y+=10;}
-        doc.setFont("helvetica","normal");doc.setFontSize(10);doc.text("Output "+num,M,y);y+=6;
-        y+=(await addImage(doc,data,M,y,C,H-M-y-10))+12;num++;
-      }catch(e){console.warn("Skipping screenshot",e);}
+  for(let k=0;k<programs.length;k++){
+    const p=programs[k];
+    const label=single?"CODE":"CODE "+(k+1);
+    if(k>0){ensure(40);y+=4;}
+    heading(label+(p.title?" — "+p.title:""),13);y+=1;
+    if(p.code.trim()) block(p.code,label,[245,246,248]);
+
+    if(p.outputs.length){
+      const outHead=single?"OUTPUT":"OUTPUT — CODE "+(k+1);
+      ensure(30);
+      y+=2;heading(outHead,12);y+=1;
+      for(let j=0;j<p.outputs.length;j++){
+        const o=p.outputs[j];
+        const cap=(single?"Output "+(j+1):"Output "+(k+1)+"."+(j+1))+(o.caption?" — "+o.caption:"");
+        if(o.type==="text"){
+          ensure(20,outHead);
+          doc.setFont("helvetica","normal");doc.setFontSize(10);doc.text(cap,M,y);y+=6;
+          block(o.text,outHead,[238,242,250]);
+          continue;
+        }
+        try{
+          onProgress(`Adding screenshot ${++imgDone} of ${totalImgs}…`);
+          const img=await toJpeg(await screenshotDataURL(o.path));
+          if(!img) continue;
+          const maxH=LIMIT-TOP-16;
+          let w=C,h=C*img.h/img.w;
+          if(h>maxH){h=maxH;w=h*img.w/img.h;}
+          if(y+7+h>LIMIT) newPage(outHead);
+          doc.setFont("helvetica","normal");doc.setFontSize(10);doc.setTextColor(0,0,0);
+          doc.text(doc.splitTextToSize(cap,C)[0],M,y);y+=4;
+          doc.addImage(img.data,"JPEG",M,y,w,h);
+          doc.setDrawColor(215,218,225);doc.setLineWidth(.2);doc.rect(M,y,w,h);
+          y+=h+9;
+        }catch(e){console.warn("Skipping screenshot",e);}
+      }
     }
   }
 
   const total=doc.getNumberOfPages();
-  for(let p=1;p<=total;p++){
-    doc.setPage(p);doc.setFont("helvetica","normal");doc.setFontSize(8);doc.setTextColor(110,115,125);
+  for(let pg=1;pg<=total;pg++){
+    doc.setPage(pg);doc.setFont("helvetica","normal");doc.setFontSize(8);doc.setTextColor(110,115,125);
     doc.text("Lab Hub • "+d.name+" • "+d.roll,M,H-9);
-    doc.text("Page "+p+" of "+total,W-M,H-9,{align:"right"});doc.setTextColor(0,0,0);
+    doc.text("Page "+pg+" of "+total,W-M,H-9,{align:"right"});doc.setTextColor(0,0,0);
   }
-  const n=String(currentExperiment.experiment_number).padStart(2,"0");
+  const n=pad2(currentExperiment.experiment_number);
   const safe=(currentExperiment.name||"Experiment").replace(/[^a-z0-9]+/gi,"_").replace(/^_|_$/g,"");
   doc.save("Experiment_"+n+"_"+safe+".pdf");
 }
+
+/* ---------- Wiring ---------- */
+const closeModal = id => $(id).classList.add("hidden");
+["authModal","detailModal","pdfModal"].forEach(id => {
+  $(id).addEventListener("click", e => { if(e.target === $(id)) closeModal(id); });
+});
+document.addEventListener("keydown", e => {
+  if(e.key !== "Escape") return;
+  for(const id of ["pdfModal","authModal","detailModal"]) if(!$(id).classList.contains("hidden")){ closeModal(id); return; }
+  if(!$("editorModal").classList.contains("hidden") && confirmDiscard()){ dirty=false; closeModal("editorModal"); }
+});
+
 $("authBtn").onclick = async () => {
   const {data:{session}} = await sb.auth.getSession();
   if(session){await sb.auth.signOut();lockSite();$("subjects").innerHTML="";}
   else $("siteLock").style.display="grid";
 };
-$("closeAuth").onclick = () => $("authModal").classList.add("hidden");
+$("closeAuth").onclick = () => closeModal("authModal");
 $("signIn").onclick = signIn;
 $("signUp").onclick = signUp;
 $("editBtn").onclick = openEditor;
-$("closeEditor").onclick = () => $("editorModal").classList.add("hidden");
-$("editSubject").onchange = populateExperimentSelect;
-$("editExperiment").onchange = loadEditorFields;
+$("closeEditor").onclick = () => { if(confirmDiscard()){ dirty=false; closeModal("editorModal"); } };
+$("editSubject").onchange = () => {
+  if(!confirmDiscard()){ $("editSubject").value = currentSubject.id; return; }
+  currentExperiment = null; populateExperimentSelect();
+};
+$("editExperiment").onchange = () => {
+  if(!confirmDiscard()){ $("editExperiment").value = currentExperiment.id; return; }
+  loadEditorFields();
+};
+["editName","editAim","editTheory","editResult"].forEach(id => $(id).addEventListener("input", () => setDirty(true)));
 $("saveExperiment").onclick = saveExperiment;
-$("resetExperiment").onclick = loadEditorFields;
+$("resetExperiment").onclick = () => { if(confirmDiscard()) loadEditorFields(); };
+$("addProgram").onclick = addProgram;
 $("saveSubjects").onclick = saveSubjects;
 $("addSubject").onclick = addSubject;
-$("closeDetail").onclick = () => $("detailModal").classList.add("hidden");
-$("detailModal").onclick = e => { if(e.target === $("detailModal")) $("detailModal").classList.add("hidden"); };
+$("closeDetail").onclick = () => closeModal("detailModal");
+progEditorEvents();
 
-$("generatePdf").onclick=async()=>{
-  const d=pdfDetails();
-  const name=prompt("Name for PDF:",d.name);
-  if(name===null)return;
-  const roll=prompt("Roll number for PDF:",d.roll);
-  if(roll===null)return;
-  localStorage.setItem("labhub_pdf_name",name.trim()||"Aaditya Bichu");
-  localStorage.setItem("labhub_pdf_roll",roll.trim()||"24EC01");
-  const b=$("generatePdf");b.disabled=true;b.textContent="Generating…";
-  try{await generateExperimentPdf();}finally{b.disabled=false;b.textContent="📄 Generate PDF";}
+$("generatePdf").onclick = () => {
+  const d = pdfDetails();
+  const progs = getPrograms(currentExperiment).filter(hasContent);
+  const outs = progs.reduce((a,p) => a + p.outputs.length, 0);
+  $("pdfName").value = d.name;
+  $("pdfRoll").value = d.roll;
+  $("pdfSummary").textContent = `${currentExperiment.name} — ${progs.length} code${progs.length===1?"":"s"}, ${outs} output${outs===1?"":"s"}.`;
+  $("pdfStatus").textContent = "";
+  $("pdfModal").classList.remove("hidden");
 };
-$("copyCode").onclick = async () => {
-  await navigator.clipboard.writeText(currentExperiment.code);
-  $("copyCode").textContent = "Copied!";
-  setTimeout(() => $("copyCode").textContent = "Copy Code", 1000);
+$("closePdf").onclick = () => closeModal("pdfModal");
+$("pdfGo").onclick = async () => {
+  localStorage.setItem("labhub_pdf_name",$("pdfName").value.trim()||"Aaditya Bichu");
+  localStorage.setItem("labhub_pdf_roll",$("pdfRoll").value.trim()||"24EC01");
+  const b=$("pdfGo"),st=$("pdfStatus");
+  b.disabled=true;b.textContent="Generating…";st.className="status";st.textContent="Building PDF…";
+  try{
+    await generateExperimentPdf(msg => st.textContent = msg);
+    st.textContent="PDF downloaded ✓";st.className="status ok";
+  }catch(err){
+    console.error(err);st.textContent="PDF failed: "+err.message;st.className="status bad";
+  }finally{b.disabled=false;b.textContent="📄 Download PDF";}
 };
+
 $("search").oninput = e => renderSubjects(e.target.value);
 $("backBtn").onclick = () => {
   $("experimentsView").classList.add("hidden");
@@ -735,21 +1105,19 @@ $("subTab").onclick = () => {
   $("subPane").classList.remove("hidden"); $("expPane").classList.add("hidden");
   $("subTab").classList.add("active"); $("expTab").classList.remove("active");
 };
-
-sb.auth.onAuthStateChange(async () => {
-  await refreshSession();
-});
+window.addEventListener("beforeunload", e => { if(dirty){ e.preventDefault(); e.returnValue=""; } });
 
 $("lockSignIn").onclick=lockedSignIn;
 $("lockSignUp").onclick=lockedSignUp;
+$("lockPassword").addEventListener("keydown", e => { if(e.key === "Enter") lockedSignIn(); });
 
-sb.auth.onAuthStateChange(async()=>{ await refreshSession(); await loadLab(); });
-
-(async()=>{
-  const {data:{user}}=await sb.auth.getUser();
-  if(user){ await refreshSession(); await loadLab(); }
-  else lockSite();
-})();
+sb.auth.onAuthStateChange((event) => {
+  // Defer Supabase calls out of the auth callback to avoid deadlocks
+  setTimeout(async () => {
+    await refreshSession();
+    if(event === "SIGNED_IN" || event === "SIGNED_OUT" || event === "INITIAL_SESSION") await loadLab();
+  }, 0);
+});
 </script>
 </body>
 </html>
