@@ -25,7 +25,10 @@ jobs:
             -H "apikey: $SUPABASE_KEY")
           echo "Supabase responded with HTTP $code"
           cat /tmp/resp; echo
-          if [ "$code" -ge 400 ]; then exit 1; fi
+          # A 401 "permission denied" is expected: the database is private (RLS),
+          # but the query still reached Postgres, which counts as activity.
+          # Only fail if Supabase is unreachable (000) or erroring (5xx).
+          if [ "$code" = "000" ] || [ "$code" -ge 500 ]; then exit 1; fi
 
       # GitHub switches off scheduled jobs in repos with no commits for 60 days.
       # If the repo has been quiet for 45+ days, add an empty commit to keep it on.
