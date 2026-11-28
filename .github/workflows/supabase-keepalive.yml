@@ -1,0 +1,43 @@
+# Pings the Supabase database every 3 days so the free-tier project
+# is never paused for inactivity (Supabase pauses after ~7 idle days).
+name: Supabase keep-alive
+
+on:
+  schedule:
+    - cron: "17 3 */3 * *"   # 03:17 UTC every 3rd day
+  workflow_dispatch:          # lets you run it by hand from the Actions tab
+
+permissions:
+  contents: write
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Supabase
+        env:
+          # Same public key already used by index.html
+          SUPABASE_URL: https://mosllsrduvscosldetiy.supabase.co
+          SUPABASE_KEY: sb_publishable_6FmY5RVASWUiCYZ0X-czxQ_QRTcWajC
+        run: |
+          code=$(curl -s -o /tmp/resp -w "%{http_code}" \
+            "$SUPABASE_URL/rest/v1/labs?select=id&limit=1" \
+            -H "apikey: $SUPABASE_KEY")
+          echo "Supabase responded with HTTP $code"
+          cat /tmp/resp; echo
+          if [ "$code" -ge 400 ]; then exit 1; fi
+
+      # GitHub switches off scheduled jobs in repos with no commits for 60 days.
+      # If the repo has been quiet for 45+ days, add an empty commit to keep it on.
+      - uses: actions/checkout@v4
+      - name: Keep the schedule enabled
+        run: |
+          last=$(git log -1 --format=%ct)
+          age_days=$(( ( $(date +%s) - last ) / 86400 ))
+          echo "Last commit was $age_days days ago"
+          if [ "$age_days" -ge 45 ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
+            git commit --allow-empty -m "chore: keep scheduled Supabase ping enabled"
+            git push
+          fi
